@@ -5,9 +5,14 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { projects } from "@/data/projects";
 import { SectionTitle } from "@/components/section-title";
 import { useUi } from "@/components/ui-provider";
+import { Lightbox, type GalleryImage } from "@/components/lightbox";
 
 export function Projects() {
   const [open, setOpen] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{
+    images: GalleryImage[];
+    index: number;
+  } | null>(null);
   const { blip } = useUi();
   const reducedMotion = useReducedMotion();
 
@@ -83,6 +88,35 @@ export function Projects() {
                             <p className="text-sm leading-relaxed">{p.outcome}</p>
                           </div>
                         </div>
+                        {p.gallery && p.gallery.length > 0 && (
+                          <div className="mt-6">
+                            <h4 className="mb-3 font-display text-lg">
+                              Screenshots
+                            </h4>
+                            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                              {p.gallery.map((img, i) => (
+                                <li key={img.src}>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setLightbox({ images: p.gallery!, index: i });
+                                      blip("toggle");
+                                    }}
+                                    className="pixel-border pixel-press block w-full overflow-hidden bg-paper"
+                                    aria-label={`View screenshot: ${img.title}`}
+                                  >
+                                    <img
+                                      src={img.src}
+                                      alt={img.title}
+                                      loading="lazy"
+                                      className="aspect-video w-full object-cover object-top"
+                                    />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                         {p.links.length > 0 && (
                           <ul className="mt-6 flex flex-wrap gap-3">
                             {p.links.map((l) => (
@@ -109,6 +143,15 @@ export function Projects() {
           );
         })}
       </ul>
+
+      <Lightbox
+        images={lightbox?.images ?? []}
+        index={lightbox ? lightbox.index : null}
+        onClose={() => setLightbox(null)}
+        onNavigate={(i) =>
+          setLightbox((lb) => (lb ? { ...lb, index: i } : lb))
+        }
+      />
     </section>
   );
 }

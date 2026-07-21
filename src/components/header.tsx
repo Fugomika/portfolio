@@ -3,11 +3,12 @@
 import { useUi } from "@/components/ui-provider";
 
 const NAV = [
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Contact", href: "#contact" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Experience", href: "/#experience" },
+  { label: "About", href: "/#about" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 function Icon({ name }: { name: "sound-on" | "sound-off" | "scanlines" | "sun" | "moon" }) {
@@ -105,7 +106,7 @@ export function Header() {
       </a>
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
         <a
-          href="#main"
+          href="/"
           className="font-display text-xl tracking-wide"
           onClick={() => blip()}
         >

@@ -8,6 +8,7 @@ export type Project = {
   outcome: string;
   stack: string[];
   links: { label: string; href: string }[];
+  gallery?: { src: string; title: string; link?: string }[];
 };
 
 // Edit freely — the layout renders whatever is here.
@@ -40,6 +41,18 @@ export const projects: Project[] = [
       "Real users in real companies, plus the reps that made me fast at picking up an unfamiliar domain and shipping in it.",
     stack: ["Laravel", "CodeIgniter", "MySQL", "Bootstrap", "jQuery"],
     links: [{ label: "Techno Infinity", href: "https://technoinfinity.co.id" }],
+    gallery: [
+      { src: "/img/projects/talentern/talentern.png", title: "Talentern — internship management, Telkom University", link: "https://talentern.telkomuniversity.ac.id/" },
+      { src: "/img/projects/cash-connected/application.png", title: "Cash Connected — financial administration, Proxsis" },
+      { src: "/img/projects/examroom/exam-management.png", title: "Examroom — employee assessment app" },
+      { src: "/img/projects/documine/documine.png", title: "Documine — document management system" },
+      { src: "/img/projects/workspace/workspace.png", title: "Workspace — HRIS", link: "https://technoinfinity.co.id/workspace-aplikasi-hr/" },
+      { src: "/img/projects/harmonie/harmonie.png", title: "Harmonie — integrated management system", link: "https://harmonie.id/" },
+      { src: "/img/projects/timorgap/landing-page.png", title: "TIGOR — GIS prototype for Timor Gap E.P." },
+      { src: "/img/projects/pancaran/dashboard.jpg", title: "ERMS — enterprise risk management, Pancaran Group" },
+      { src: "/img/projects/safegard/safegard.png", title: "Safegard — integrated GRC for Asuransi Jasindo", link: "https://technoinfinity.co.id/aplikasi-grc-terintegrasi-safegard/" },
+      { src: "/img/projects/website-techno/homepage.png", title: "Techno Infinity — company website", link: "https://technoinfinity.co.id/" },
+    ],
   },
   {
     slug: "bloom",
@@ -85,6 +98,10 @@ export const projects: Project[] = [
       { label: "Voyage VMS", href: "https://github.com/Fugomika/voyage-vms" },
       { label: "Desa Info", href: "https://github.com/Fugomika/desa-info" },
       { label: "Pixel game", href: "https://github.com/Fugomika/pixel-game" },
+    ],
+    gallery: [
+      { src: "/img/projects/desa-kedisan-info/landing.png", title: "Desa Kedisan — village information site" },
+      { src: "/img/projects/desa-mart/landing.png", title: "DesaMart — village marketplace landing" },
     ],
   },
 ];
