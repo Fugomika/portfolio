@@ -30,9 +30,9 @@ export const projects: Project[] = [
   },
   {
     slug: "client-work",
-    title: "Client work @ Techno Infinity",
-    tagline: "9 production apps in two and a half years",
-    role: "Software Engineer, fullstack",
+    title: "Techno Infinity",
+    tagline: "Fullstack engineer — 9 production apps in 2½ years",
+    role: "Software Engineer (full-time) at Techno Infinity",
     problem:
       "Agency work means a new domain every few months: HR, risk management, finance, document workflows, education — each with a client who needs it live on a deadline.",
     built:
