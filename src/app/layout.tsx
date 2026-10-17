@@ -48,7 +48,8 @@ export default function RootLayout({
         {/* Runs before paint so the saved theme never flashes */}
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="min-h-full flex flex-col">
+      {/* Extensions like Grammarly and ColorZilla inject attributes on body */}
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <UiProvider>{children}</UiProvider>
       </body>
     </html>
