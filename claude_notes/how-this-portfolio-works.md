@@ -110,7 +110,7 @@ same API, imported from `motion/react`). Two layers of reduced-motion support:
 
 1. A global CSS `@media (prefers-reduced-motion: reduce)` kill-switch that
    flattens all CSS animations/transitions.
-2. `useReducedMotion()` in components that drive JS animation: the robot
+2. `useReducedMotion()` in components that drive JS animation: the record's
    label cover just swaps instead of cross-fading, project cards skip the expand spring,
    confetti never renders.
 

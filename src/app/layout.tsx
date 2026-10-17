@@ -3,7 +3,7 @@ import { Pixelify_Sans, Nunito_Sans, IBM_Plex_Mono, Source_Serif_4 } from "next/
 import { UiProvider } from "@/components/ui-provider";
 import { MusicProvider } from "@/components/music-provider";
 import { MusicFx } from "@/components/music-fx";
-import { MusicPlayer } from "@/components/music-player";
+import { NowPlayingPill } from "@/components/now-playing-pill";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -64,7 +64,7 @@ export default function RootLayout({
           <MusicProvider>
             {children}
             <MusicFx />
-            <MusicPlayer />
+            <NowPlayingPill />
           </MusicProvider>
         </UiProvider>
       </body>

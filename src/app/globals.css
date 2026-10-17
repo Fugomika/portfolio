@@ -335,16 +335,6 @@ body::after {
   text-align: left;
 }
 
-@keyframes float-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
 @keyframes star-twinkle {
   0%,
   100% {
@@ -393,18 +383,6 @@ body::after {
 }
 
 /* --- Music player + per-track ambient effects --- */
-.eq-bar {
-  animation: eq-bounce 0.9s steps(4) infinite alternate;
-}
-@keyframes eq-bounce {
-  from {
-    height: 20%;
-  }
-  to {
-    height: 100%;
-  }
-}
-
 .marquee-run {
   display: inline-block;
   animation: marquee 8s linear infinite;
@@ -416,17 +394,6 @@ body::after {
   to {
     transform: translateX(-50%);
   }
-}
-
-/* YouTube needs a >=200x200 viewport; fill the player card's width */
-.yt-screen iframe {
-  display: block;
-  width: 100%;
-  height: 200px;
-}
-
-.cover-bob {
-  animation: float-bob 2.4s steps(6) infinite;
 }
 
 /* --- Vinyl record (hero) --- */
