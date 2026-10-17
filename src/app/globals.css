@@ -408,6 +408,15 @@ body::after {
   }
 }
 
+/* While the now-playing pill is up, give the footer room so the pill never
+   covers its text (it's fixed to the bottom-left corner). */
+footer {
+  transition: padding-bottom 300ms ease;
+}
+:root[data-pill] footer {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+}
+
 /* --- Vinyl record (hero) --- */
 .vinyl-disc {
   /* Stays a black record in every theme, like a real one */

@@ -107,12 +107,22 @@ function Island({ width, house }: { width: number; house?: boolean }) {
   );
 }
 
-// Parked in the side gutters (outside the 1024px content column) so they
-// never sit behind text — which means they only show on wide screens.
-const ISLANDS: { side: "left" | "right"; inset: string; top: string; width: number; house?: boolean; duration: number }[] = [
-  { side: "left", inset: "1rem", top: "16%", width: 112, house: true, duration: 5 },
-  { side: "right", inset: "1.25rem", top: "58%", width: 96, duration: 6.5 },
-  { side: "left", inset: "2rem", top: "80%", width: 64, duration: 4.2 },
+// Wide screens: parked in the side gutters (outside the 1024px content
+// column) so they never sit behind text.
+const ISLANDS: {
+  side: "left" | "right";
+  inset: string;
+  top: string;
+  width: number;
+  house?: boolean;
+  duration: number;
+  /** Narrow screens have no gutters, so they get their own single island. */
+  screens: "wide" | "narrow";
+}[] = [
+  { side: "left", inset: "1rem", top: "16%", width: 112, house: true, duration: 5, screens: "wide" },
+  { side: "right", inset: "1.25rem", top: "58%", width: 96, duration: 6.5, screens: "wide" },
+  { side: "left", inset: "2rem", top: "80%", width: 64, duration: 4.2, screens: "wide" },
+  { side: "left", inset: "56%", top: "40%", width: 76, house: true, duration: 5.5, screens: "narrow" },
 ];
 
 function Islands() {
@@ -121,7 +131,7 @@ function Islands() {
       {ISLANDS.map((isl, i) => (
         <span
           key={i}
-          className="absolute hidden xl:block"
+          className={`absolute ${isl.screens === "wide" ? "hidden xl:block" : "xl:hidden"}`}
           style={{
             [isl.side]: isl.inset,
             top: isl.top,

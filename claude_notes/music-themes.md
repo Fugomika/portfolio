@@ -11,6 +11,10 @@
   ke-scroll lewat, muncul pill kecil di kiri bawah (piringan mini muter + judul + ❚❚).
   Klik judul → scroll balik ke piringan. Pakai `IntersectionObserver` buat tahu piringannya
   kelihatan atau nggak. Panel "fugo.fm" yang lama sudah dihapus.
+  Selama pill muncul, `<html>` dapat atribut `data-pill` dan footer dapat ruang ekstra di
+  bawah, jadi teks footer (© …) nggak ketutupan pill. Footer **nggak** dipanjangin
+  permanen — cuma pas pill ada, jadi nggak ada ruang kosong kalau musik mati. Posisi pill
+  juga ditambah `env(safe-area-inset-bottom)` buat iPhone.
 - Achievement baru: **Crate digger** — muncul setelah ketiga lagu pernah diputar.
 - Pause terus play lagi → lanjut dari posisi terakhir, bukan dari awal.
 
@@ -64,8 +68,9 @@ Tiga hal yang dulu "loncat" sekarang memudar bareng:
 ### Pulau melayang & wyvern (Space Day)
 - **Pulau**: SVG piksel (rumput, tanah, batu yang makin runcing ke bawah, pohon, rumah
   bata kecil) yang naik-turun pelan. Sengaja ditaruh di **margin kiri/kanan** di luar
-  kolom konten 1024px biar nggak nutupin teks — konsekuensinya cuma muncul di layar lebar
-  (≥1280px, `xl:`).
+  kolom konten 1024px biar nggak nutupin teks (layar ≥1280px, `xl:`). Di HP/tablet
+  nggak ada margin, jadi ada **satu pulau sendiri** agak ke tengah (`left: 56%`) — dia
+  diam di layar sementara halaman di-scroll, jadi kadang ngintip di antara section.
 - **Wyvern**: 12 potongan (kepala, badan, badan berkaki, ekor) yang semuanya jalan di
   **satu jalur bergelombang yang sama** pakai CSS `offset-path`, tiap potongan telat 0,12
   detik dari yang di depannya — jadi badannya ngikutin kepala kayak ular beneran.

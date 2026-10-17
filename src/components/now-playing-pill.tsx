@@ -26,6 +26,11 @@ export function NowPlayingPill() {
 
   const show = on && !vinylVisible;
 
+  // Tell the page the pill is up, so the footer can make room for it.
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-pill", show);
+  }, [show]);
+
   return (
     <AnimatePresence>
       {show && (
@@ -34,14 +39,10 @@ export function NowPlayingPill() {
           animate={{ y: 0, opacity: 1 }}
           exit={reducedMotion ? undefined : { y: 24, opacity: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 30 }}
-          className="pixel-border pixel-shadow-sm fixed bottom-4 left-4 z-[80] flex max-w-[calc(100vw-2rem)] items-center gap-2 bg-card py-1.5 pl-1.5 pr-2"
+          className="pixel-border pixel-shadow-sm fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-[80] flex max-w-[calc(100vw-2rem)] items-center gap-2 bg-card py-1.5 pl-1.5 pr-2"
         >
           {/* Mini record: the cover, spinning */}
-          <span
-            aria-hidden
-            className="vinyl-disc vinyl-spin relative block h-9 w-9 shrink-0 rounded-full"
-            style={{ boxShadow: "0 0 0 2px var(--line)" }}
-          >
+          <span aria-hidden className="vinyl-disc vinyl-spin relative block h-9 w-9 shrink-0 rounded-full">
             <img
               src={track.cover}
               alt=""
