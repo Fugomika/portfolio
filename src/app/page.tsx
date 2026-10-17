@@ -1,8 +1,8 @@
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
+import { About } from "@/components/about";
 import { Projects } from "@/components/projects";
 import { Experience } from "@/components/experience";
-import { About } from "@/components/about";
 import { Skills } from "@/components/skills";
 import { Contact } from "@/components/contact";
 import { site } from "@/data/site";
@@ -13,9 +13,9 @@ export default function Home() {
       <Header />
       <main id="main" className="grow">
         <Hero />
+        <About />
         <Projects />
         <Experience />
-        <About />
         <Skills />
         <Contact />
       </main>

@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useUi } from "@/components/ui-provider";
 
 const NAV = [
+  { label: "About", href: "/#about" },
   { label: "Projects", href: "/#projects" },
   { label: "Experience", href: "/#experience" },
-  { label: "About", href: "/#about" },
   { label: "Skills", href: "/#skills" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/#contact" },
@@ -105,13 +106,13 @@ export function Header() {
         Skip to content
       </a>
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
-        <a
+        <Link
           href="/"
           className="font-display text-xl tracking-wide"
           onClick={() => blip()}
         >
           fugomika<span className="text-lime-deep">_</span>
-        </a>
+        </Link>
 
         <nav aria-label="Sections" className="hidden gap-5 sm:flex">
           {NAV.map((item) => (

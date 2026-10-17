@@ -5,7 +5,7 @@
 This is a Next.js (App Router) single-page portfolio, fully static — `next build`
 prerenders everything (`output: "export"`), so it deploys to GitHub Pages (see
 `deploy-github-pages.md`) with no server cost. The page is composed of sections in `src/app/page.tsx`:
-Header → Hero → Projects → Experience → About → Skills → Contact → footer.
+Header → Hero → About → Projects → Experience → Skills → Contact → footer.
 
 **The one rule of the architecture:** content lives in `src/data/`, layout lives in
 `src/components/`. To change what the site says, you never touch a component.
@@ -132,3 +132,11 @@ same API, imported from `motion/react`). Two layers of reduced-motion support:
 3. ~~Swap the pixel avatar~~ — done (`public/avatar.png`).
 4. ~~Deploy~~ — done via GitHub Pages; the manual DNS/Settings steps are in
    `deploy-github-pages.md`.
+
+## Section order (why About comes before Projects)
+
+Developer-portfolio guides converge on Hero → Projects → About → Skills →
+proof → Contact; the one point they argue about is where About goes. We use
+**Hero → About → Projects → Experience → Skills → Contact**: About is short (three
+paragraphs), so projects still arrive fast, and Experience (real employers) is
+stronger proof than a list of tools, so it sits above Skills.
