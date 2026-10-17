@@ -40,7 +40,7 @@ function Cover({ project }: { project: Project }) {
     .toUpperCase();
   return (
     <div className="dither absolute inset-0 flex items-center justify-center">
-      <span className="pixel-border bg-card px-2 py-0.5 font-display text-2xl sm:text-3xl">{initials}</span>
+      <span className="pixel-border relative bg-card px-2 py-0.5 font-display text-2xl sm:text-3xl">{initials}</span>
     </div>
   );
 }
