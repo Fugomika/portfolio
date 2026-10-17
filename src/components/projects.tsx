@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { projects, formatPeriod, type Project } from "@/data/projects";
 import { SectionTitle } from "@/components/section-title";
 import { useUi } from "@/components/ui-provider";
@@ -18,6 +18,27 @@ const KIND_LABEL: Record<Project["kind"], string> = {
   personal: "personal",
   college: "college",
 };
+
+/**
+ * 2x2 pixel checkerboard. An SVG pattern is drawn as vectors at the screen's
+ * real resolution; CSS gradient/mask versions got smoothed into blurry ovals
+ * (especially on iPhone, which rasterises masks at 1x and scales them up).
+ */
+function Dither() {
+  // useId can contain ":" or "«»", which break url(#…) references.
+  const id = `dither-${useId().replace(/[^\w-]/g, "")}`;
+  return (
+    <svg aria-hidden className="absolute inset-0 h-full w-full" style={{ shapeRendering: "crispEdges" }}>
+      <defs>
+        <pattern id={id} width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="4" height="4" fill="var(--lime)" fillOpacity="0.55" />
+          <rect x="4" y="4" width="4" height="4" fill="var(--lime)" fillOpacity="0.55" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${id})`} />
+    </svg>
+  );
+}
 
 function Cover({ project }: { project: Project }) {
   const cover = project.figures?.[0];
@@ -39,7 +60,8 @@ function Cover({ project }: { project: Project }) {
     .join("")
     .toUpperCase();
   return (
-    <div className="dither absolute inset-0 flex items-center justify-center">
+    <div className="absolute inset-0 flex items-center justify-center bg-paper">
+      <Dither />
       <span className="pixel-border relative bg-card px-2 py-0.5 font-display text-2xl sm:text-3xl">{initials}</span>
     </div>
   );

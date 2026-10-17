@@ -179,21 +179,6 @@ body::after {
   }
 }
 
-/* 2x2 checker dither — placeholder for project cards with no screenshot.
-   Drawn as a vector mask with crisp edges: a gradient-based checker gets
-   anti-aliased into blurry ovals. */
-@utility dither {
-  background-color: var(--paper);
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: color-mix(in srgb, var(--lime) 55%, transparent);
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' shape-rendering='crispEdges'%3E%3Crect width='4' height='4'/%3E%3Crect x='4' y='4' width='4' height='4'/%3E%3C/svg%3E")
-      0 0 / 8px 8px;
-  }
-}
-
 /* Stepped underline sweep for inline links */
 @utility link-sweep {
   background-image: linear-gradient(var(--lime), var(--lime));
@@ -430,9 +415,9 @@ body::after {
     radial-gradient(circle, transparent 0 30%, #0b0b0b 30% 33%, transparent 33% 100%),
     radial-gradient(circle, transparent 0 62%, #0b0b0b 62% 63.5%, transparent 63.5% 100%),
     repeating-radial-gradient(circle, #141414 0 2px, #1e1e1e 2px 3px);
-  box-shadow:
-    0 0 0 2px var(--line),
-    6px 6px 0 0 var(--shadow);
+  /* Concentric outline only: an offset "pixel" shadow on a circle reads as a
+     lopsided crescent (a blue oval in the Iwatodai palette). */
+  box-shadow: 0 0 0 2px var(--line);
 }
 .vinyl-sheen {
   background: conic-gradient(

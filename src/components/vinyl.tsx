@@ -64,7 +64,13 @@ export function Vinyl() {
 
         <div id="vinyl" className="relative aspect-square w-[min(16rem,52vw)] md:w-48 lg:w-60">
           {/* Song progress around the rim */}
-          <svg viewBox="0 0 100 100" aria-hidden className="absolute -inset-[7%] -rotate-90">
+          {/* Sized explicitly: Safari won't stretch an svg from insets alone, which
+              pushed the ring off-centre on iPhone. */}
+          <svg
+            viewBox="0 0 100 100"
+            aria-hidden
+            className="absolute left-[-7%] top-[-7%] h-[114%] w-[114%] -rotate-90"
+          >
             <circle cx="50" cy="50" r="48" fill="none" stroke="var(--line)" strokeOpacity="0.15" strokeWidth="2" />
             <circle
               cx="50"
