@@ -13,18 +13,19 @@ import { playSfx } from "@/lib/sfx";
 
 type Achievement = { id: string; title: string; detail: string };
 
-const ACHIEVEMENTS: Record<string, Achievement> = {
-  "first-contact": {
-    id: "first-contact",
-    title: "First contact",
-    detail: "You booped the robot five times. It appreciates the attention.",
+// `satisfies` keeps the literal keys, so unlock() rejects unknown ids.
+const ACHIEVEMENTS = {
+  "crate-digger": {
+    id: "crate-digger",
+    title: "Crate digger",
+    detail: "You played all three records. Good taste, honestly.",
   },
   "cheat-code": {
     id: "cheat-code",
     title: "Cheat code accepted",
     detail: "↑↑↓↓←→←→BA — a person of culture. Nothing is unlocked. Or is it?",
   },
-};
+} satisfies Record<string, Achievement>;
 
 type Ui = {
   dark: boolean;

@@ -9,21 +9,21 @@ import {
   useState,
 } from "react";
 import { tracks, type Palette, type Track } from "@/data/music";
+import { useUi } from "@/components/ui-provider";
 
-export type MusicStatus = "idle" | "loading" | "playing" | "no-source" | "error";
+export type MusicStatus = "idle" | "loading" | "playing" | "error";
 
 type Music = {
   tracks: Track[];
   index: number;
   track: Track;
-  /** Music mode: while on, the current track's palette and effect are applied. */
+  /** Music mode: while on, the current track plays and its palette and effect are applied. */
   on: boolean;
   status: MusicStatus;
+  /** How far through the current track, 0–1. */
+  progress: number;
   toggle: () => void;
-  select: (i: number) => void;
   step: (delta: number) => void;
-  /** Where the YouTube player mounts (YouTube requires it to be visible). */
-  youtubeHost: React.RefObject<HTMLDivElement | null>;
 };
 
 const MusicContext = createContext<Music | null>(null);
@@ -50,68 +50,40 @@ const VARS: [keyof Omit<Palette, "scheme">, string][] = [
   ["onLime", "--on-lime"],
 ];
 
-// --- Minimal YouTube IFrame API typings -----------------------------------
-type YTPlayer = {
-  loadVideoById: (id: string) => void;
-  playVideo: () => void;
-  stopVideo: () => void;
-  destroy: () => void;
-};
-type YTNamespace = {
-  Player: new (
-    el: HTMLElement,
-    opts: {
-      width: number;
-      height: number;
-      videoId: string;
-      playerVars: Record<string, string | number>;
-      events: {
-        onReady?: (e: { target: YTPlayer }) => void;
-        onStateChange?: (e: { data: number }) => void;
-        onError?: () => void;
-      };
-    },
-  ) => YTPlayer;
-};
-declare global {
-  interface Window {
-    YT?: YTNamespace;
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-let ytLoading: Promise<YTNamespace> | null = null;
-function loadYouTube(): Promise<YTNamespace> {
-  if (window.YT?.Player) return Promise.resolve(window.YT);
-  ytLoading ??= new Promise((resolve, reject) => {
-    window.onYouTubeIframeAPIReady = () => resolve(window.YT!);
-    const s = document.createElement("script");
-    s.src = "https://www.youtube.com/iframe_api";
-    s.onerror = () => {
-      ytLoading = null;
-      reject(new Error("YouTube API failed to load"));
-    };
-    document.head.appendChild(s);
-  });
-  return ytLoading;
-}
-// ---------------------------------------------------------------------------
-
 export function MusicProvider({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
   const [on, setOn] = useState(false);
   const [status, setStatus] = useState<MusicStatus>("idle");
+  const [progress, setProgress] = useState(0);
   const audio = useRef<HTMLAudioElement | null>(null);
-  const yt = useRef<YTPlayer | null>(null);
-  const youtubeHost = useRef<HTMLDivElement | null>(null);
+  // Read by the audio element's "ended" listener, which outlives renders.
+  const indexRef = useRef(0);
+  const played = useRef(new Set<string>());
+  // What we last assigned to the audio element. Compared instead of `el.src`,
+  // which the browser normalises (e.g. spaces become %20).
+  const loadedSrc = useRef<string | null>(null);
+  const { unlock } = useUi();
   const track = tracks[index];
 
-  // Restore the last chosen track once on the client.
+  const select = useCallback((i: number) => {
+    const n = (i + tracks.length) % tracks.length;
+    indexRef.current = n;
+    setIndex(n);
+    setProgress(0);
+    try {
+      localStorage.setItem(TRACK_KEY, tracks[n].id);
+    } catch {}
+  }, []);
+
+  // Restore the last track once on the client.
   useEffect(() => {
     try {
       const i = tracks.findIndex((t) => t.id === localStorage.getItem(TRACK_KEY));
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (i >= 0) setIndex(i);
+      if (i >= 0) {
+        indexRef.current = i;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIndex(i);
+      }
     } catch {}
   }, []);
 
@@ -133,80 +105,48 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(t);
   }, [on, track]);
 
-  const stopAll = useCallback(() => {
-    audio.current?.pause();
-    yt.current?.stopVideo();
-  }, []);
-
-  // Drive the actual audio from (on, track).
+  // Drive the audio from (on, track). Pausing keeps the position, so
+  // pressing play again resumes; a new track starts from the top.
   useEffect(() => {
+    if (!audio.current) {
+      const el = new Audio();
+      // Album mode: when a song ends, the next one starts (wrapping around).
+      el.addEventListener("ended", () => select(indexRef.current + 1));
+      el.addEventListener("timeupdate", () => {
+        if (el.duration) setProgress(el.currentTime / el.duration);
+      });
+      audio.current = el;
+    }
+    const el = audio.current;
     let cancelled = false;
-    stopAll();
     /* eslint-disable react-hooks/set-state-in-effect */
     if (!on) {
+      el.pause();
       setStatus("idle");
-      return;
-    }
-    const src = track.source;
-    if (!src) {
-      setStatus("no-source");
       return;
     }
     setStatus("loading");
     /* eslint-enable react-hooks/set-state-in-effect */
-
-    if (src.kind === "file") {
-      audio.current ??= new Audio();
-      const el = audio.current;
-      el.loop = true;
-      if (!el.src.endsWith(src.src)) el.src = src.src;
-      el.play()
-        .then(() => !cancelled && setStatus("playing"))
-        .catch(() => !cancelled && setStatus("error"));
-    } else {
-      loadYouTube()
-        .then((YT) => {
-          if (cancelled || !youtubeHost.current) return;
-          if (yt.current) {
-            yt.current.loadVideoById(src.videoId);
-            return;
-          }
-          const mount = document.createElement("div");
-          youtubeHost.current.replaceChildren(mount);
-          yt.current = new YT.Player(mount, {
-            width: 200,
-            height: 200,
-            videoId: src.videoId,
-            // loop needs the same id as a one-item playlist
-            playerVars: { autoplay: 1, loop: 1, playlist: src.videoId, playsinline: 1, rel: 0 },
-            events: {
-              onReady: (e) => e.target.playVideo(),
-              onStateChange: (e) => e.data === 1 && setStatus("playing"),
-              onError: () => setStatus("error"),
-            },
-          });
-        })
-        .catch(() => !cancelled && setStatus("error"));
+    if (loadedSrc.current !== track.src) {
+      loadedSrc.current = track.src;
+      el.src = track.src;
     }
+    el.play()
+      .then(() => {
+        if (cancelled) return;
+        setStatus("playing");
+        played.current.add(track.id);
+        if (played.current.size === tracks.length) unlock("crate-digger");
+      })
+      .catch(() => !cancelled && setStatus("error"));
     return () => {
       cancelled = true;
     };
-  }, [on, track, stopAll]);
+  }, [on, track, select, unlock]);
 
-  useEffect(() => () => {
-    audio.current?.pause();
-    yt.current?.destroy();
-  }, []);
+  useEffect(() => () => audio.current?.pause(), []);
 
-  const select = useCallback((i: number) => {
-    const n = (i + tracks.length) % tracks.length;
-    setIndex(n);
-    try {
-      localStorage.setItem(TRACK_KEY, tracks[n].id);
-    } catch {}
-  }, []);
-
-  const step = useCallback((delta: number) => select(index + delta), [index, select]);
+  const step = useCallback((delta: number) => select(indexRef.current + delta), [select]);
   const toggle = useCallback(() => setOn((o) => !o), []);
 
   // OS media controls (media keys, lock screen, "now playing" widgets).
@@ -218,9 +158,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
           title: track.title,
           artist: track.credit,
           album: "fugo.fm",
-          artwork: track.cover
-            ? [{ src: new URL(track.cover, location.href).href, sizes: "447x447" }]
-            : [],
+          artwork: [{ src: new URL(track.cover, location.href).href, sizes: "447x447" }],
         })
       : null;
     ms.setActionHandler("play", () => setOn(true));
@@ -230,9 +168,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, [on, track, step]);
 
   return (
-    <MusicContext.Provider
-      value={{ tracks, index, track, on, status, toggle, select, step, youtubeHost }}
-    >
+    <MusicContext.Provider value={{ tracks, index, track, on, status, progress, toggle, step }}>
       {children}
     </MusicContext.Provider>
   );

@@ -89,11 +89,10 @@ function RobotPixels() {
 }
 
 export function Robot() {
-  const { blip, unlock } = useUi();
+  const { blip } = useUi();
   const reducedMotion = useReducedMotion();
   const [rings, setRings] = useState<number[]>([]);
   const [spin, setSpin] = useState(0);
-  const clicks = useRef(0);
   const lastPing = useRef(0);
 
   const ping = () => {
@@ -109,8 +108,6 @@ export function Robot() {
     ping();
     blip("ping");
     if (!reducedMotion) setSpin((s) => s + 1);
-    clicks.current += 1;
-    if (clicks.current === 5) unlock("first-contact");
   };
 
   return (

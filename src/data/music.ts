@@ -12,7 +12,7 @@ const song = {
 };
 
 export type Palette = {
-  /** Which way the robot's stars etc. behave while this palette is active. */
+  /** Whether Tailwind's `dark:` variant applies while this palette is active. */
   scheme: "light" | "dark";
   paper: string;
   card: string;
@@ -28,20 +28,14 @@ export type Palette = {
   onLime: string;
 };
 
-export type TrackSource =
-  /** An audio URL — see `song` above for files in the repo. */
-  | { kind: "file"; src: string }
-  /** The id from a YouTube link: youtube.com/watch?v=<id>. */
-  | { kind: "youtube"; videoId: string };
-
 export type Track = {
   id: string;
   title: string;
   credit: string;
-  /** Leave undefined until you've picked a file or video — the theme still works. */
-  source?: TrackSource;
-  /** Album art shown in the player. */
-  cover?: string;
+  /** Audio URL — see `song` above. */
+  src: string;
+  /** Album art on the record's label. */
+  cover: string;
   palette: Palette;
   effect: "stars" | "motes" | "glitch";
 };
@@ -60,13 +54,13 @@ const monochrome: Palette = {
   onLime: "#0a0a0a",
 };
 
-// The first track is the default.
+// Played in this order, wrapping back to the first.
 export const tracks: Track[] = [
   {
     id: "terraria-space-day",
     title: "Space Day",
     credit: "Terraria OST — Re-Logic",
-    source: { kind: "file", src: song.spaceDay },
+    src: song.spaceDay,
     cover: terrariaCover.src,
     palette: {
       scheme: "dark",
@@ -87,7 +81,7 @@ export const tracks: Track[] = [
     id: "iwatodai-dorm-reload",
     title: "Iwatodai Dorm -Reload-",
     credit: "Persona 3 Reload OST — ATLUS",
-    source: { kind: "file", src: song.iwatodai },
+    src: song.iwatodai,
     cover: personaCover.src,
     palette: {
       scheme: "light",
@@ -108,26 +102,7 @@ export const tracks: Track[] = [
     id: "verses-sans",
     title: "Song That Plays When Somebody Verses Sans",
     credit: "Undertale 10th Anniversary OST — Toby Fox",
-    source: { kind: "file", src: song.sans },
-    cover: undertaleCover.src,
-    palette: monochrome,
-    effect: "glitch",
-  },
-  // No local file for these two yet, so they still stream from YouTube.
-  {
-    id: "megalovania-jazz",
-    title: "Megalovania (jazz)",
-    credit: "Undertale — Toby Fox, jazz cover by insaneintherainmusic",
-    source: { kind: "youtube", videoId: "1JbKOeeGRAM" },
-    cover: undertaleCover.src,
-    palette: monochrome,
-    effect: "glitch",
-  },
-  {
-    id: "megalovania-slowed",
-    title: "Megalovania (slowed)",
-    credit: "Undertale — Toby Fox, slowed edit by Mr.Blackhole",
-    source: { kind: "youtube", videoId: "R6l8LIk8Vas" },
+    src: song.sans,
     cover: undertaleCover.src,
     palette: monochrome,
     effect: "glitch",

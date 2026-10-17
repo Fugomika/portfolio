@@ -9,7 +9,6 @@ const STATUS: Record<MusicStatus, string> = {
   idle: "paused",
   loading: "loading…",
   playing: "now playing",
-  "no-source": "theme only — no audio added yet",
   error: "couldn't play this track",
 };
 
@@ -45,11 +44,11 @@ function Equalizer({ active }: { active: boolean }) {
 }
 
 export function MusicPlayer() {
-  const { tracks, index, track, on, status, toggle, select, step, youtubeHost } = useMusic();
+  const { tracks, index, track, on, status, toggle, step } = useMusic();
   const { blip } = useUi();
   const reducedMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
-  const youtubeVisible = on && track.source?.kind === "youtube";
+  const youtubeVisible = false;
 
   return (
     <div className="fixed bottom-4 left-4 z-[80] flex flex-col items-start gap-2">
@@ -76,13 +75,6 @@ export function MusicPlayer() {
           </div>
         )}
 
-        <div
-          ref={youtubeHost}
-          aria-label="YouTube player"
-          className={`yt-screen border-line bg-[#000] ${youtubeVisible ? "" : "hidden"} ${
-            open ? "border-b-2" : ""
-          }`}
-        />
 
         <AnimatePresence initial={false}>
           {open && (
@@ -169,7 +161,7 @@ export function MusicPlayer() {
                     <button
                       type="button"
                       onClick={() => {
-                        select(i);
+                        step(i - index);
                         blip();
                       }}
                       aria-current={i === index ? "true" : undefined}
@@ -182,11 +174,6 @@ export function MusicPlayer() {
                       )}
                       <span className="truncate">{t.title}</span>
                       <span className="ml-auto flex shrink-0 items-center gap-1.5">
-                        {(!t.source || t.source.kind === "youtube") && (
-                          <span className="font-mono text-[10px] opacity-70">
-                            {t.source ? "yt" : "no audio"}
-                          </span>
-                        )}
                         {/* Palette preview: background, ink, accent */}
                         <span aria-hidden className="flex border border-current">
                           {[t.palette.paper, t.palette.ink, t.palette.lime].map((c, k) => (
