@@ -3,8 +3,8 @@
 ## The big picture
 
 This is a Next.js (App Router) single-page portfolio, fully static — `next build`
-prerenders everything, so it deploys to Vercel (or any static host) with zero config
-and no server cost. The page is composed of sections in `src/app/page.tsx`:
+prerenders everything (`output: "export"`), so it deploys to GitHub Pages (see
+`deploy-github-pages.md`) with no server cost. The page is composed of sections in `src/app/page.tsx`:
 Header → Hero → Projects → Experience → About → Skills → Contact → footer.
 
 **The one rule of the architecture:** content lives in `src/data/`, layout lives in
@@ -129,5 +129,6 @@ same API, imported from `motion/react`). Two layers of reduced-motion support:
 2. Skim `src/data/experience.ts` and the Geotraking / Techno Infinity case
    studies in `src/data/projects.ts` — they're sourced from the resume JSON
    behind your old dev-porto site; double-check anything client-confidential.
-3. Swap the pixel avatar in `about.tsx` for a photo or commissioned pixel art.
-4. Deploy: push to GitHub → import in Vercel → done (no env vars needed).
+3. ~~Swap the pixel avatar~~ — done (`public/avatar.png`).
+4. ~~Deploy~~ — done via GitHub Pages; the manual DNS/Settings steps are in
+   `deploy-github-pages.md`.
