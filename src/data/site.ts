@@ -2,6 +2,8 @@ export const site = {
   name: "Abdurrahman Farras Fadhila Triandhono",
   shortName: "Abdurrahman Farras",
   handle: "Fugomika",
+  // Matches public/CNAME; link previews need absolute URLs.
+  url: "https://fugomika.dev",
   role: "Software Engineer",
   company: "Geomatika Satelit Indonesia",
   location: "Bogor, Indonesia",

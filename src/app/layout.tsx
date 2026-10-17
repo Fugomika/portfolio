@@ -5,6 +5,7 @@ import { MusicProvider } from "@/components/music-provider";
 import { MusicFx } from "@/components/music-fx";
 import { NowPlayingPill } from "@/components/now-playing-pill";
 import { site } from "@/data/site";
+import { OG_ALT, OG_SIZE } from "./og.png/route";
 import "./globals.css";
 
 const pixel = Pixelify_Sans({
@@ -40,12 +41,23 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  // Makes the generated og:image URL absolute (WhatsApp ignores relative ones).
+  metadataBase: new URL(site.url),
   title: `${site.handle} — ${site.name}`,
   description: site.pitch,
   openGraph: {
     title: `${site.handle} — Software Engineer`,
     description: site.pitch,
     type: "website",
+    url: "/",
+    siteName: site.handle,
+    images: [{ url: "/og.png", ...OG_SIZE, alt: OG_ALT, type: "image/png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.handle} — Software Engineer`,
+    description: site.pitch,
+    images: [{ url: "/og.png", alt: OG_ALT }],
   },
 };
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/header";
 import { getAllPosts, getPost } from "@/lib/blog";
 import { site } from "@/data/site";
+import { OG_ALT, OG_SIZE } from "@/app/og.png/route";
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }));
@@ -15,7 +16,25 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
-  return { title: `${post.title} — ${site.handle}`, description: post.excerpt };
+  // A page's openGraph replaces the layout's (no merge), so restate the image.
+  return {
+    title: `${post.title} — ${site.handle}`,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      url: `/blog/${slug}`,
+      siteName: site.handle,
+      images: [{ url: "/og.png", ...OG_SIZE, alt: OG_ALT, type: "image/png" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [{ url: "/og.png", alt: OG_ALT }],
+    },
+  };
 }
 
 export default async function ArticlePage({
