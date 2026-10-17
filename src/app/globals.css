@@ -12,6 +12,10 @@
   --lime-deep: #4c7a06;
   --amber: #ffb454;
   --shadow: #26221a;
+  --r-common: #8a826c;
+  --r-rare: #2f7fd8;
+  --r-epic: #9b4fd6;
+  --r-legendary: #d98200;
 }
 
 .dark {
@@ -24,6 +28,10 @@
   --lime-deep: #c6f432;
   --amber: #ffb454;
   --shadow: #0b0a12;
+  --r-common: #8e88a6;
+  --r-rare: #5aa8ff;
+  --r-epic: #c084fc;
+  --r-legendary: #ffb454;
 }
 
 @theme inline {
@@ -141,6 +149,60 @@ body::after {
   &:hover {
     background-size: 100% 0.45em;
   }
+}
+
+/* Skills inventory — item tiles coloured by rarity */
+[data-rarity="common"] { --r: var(--r-common); }
+[data-rarity="rare"] { --r: var(--r-rare); }
+[data-rarity="epic"] { --r: var(--r-epic); }
+[data-rarity="legendary"] { --r: var(--r-legendary); }
+[data-rarity="learning"] { --r: var(--lime-deep); }
+
+.rarity-text {
+  color: var(--r);
+}
+
+.item-tile {
+  overflow: hidden;
+  color: var(--ink);
+  border: 2px solid var(--r);
+  background: color-mix(in srgb, var(--r) 14%, var(--paper));
+  /* Retro bevel: light top-left, dark bottom-right */
+  box-shadow:
+    inset 3px 3px 0 0 color-mix(in srgb, white 45%, transparent),
+    inset -3px -3px 0 0 color-mix(in srgb, var(--r) 45%, transparent);
+}
+.item-tile[data-rarity="learning"] {
+  border-style: dashed;
+}
+/* Legendary items get a stepped glint sweeping across */
+.item-tile[data-rarity="legendary"]::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    color-mix(in srgb, white 55%, transparent) 50%,
+    transparent 58%
+  );
+  animation: glint 3.2s steps(12) infinite;
+}
+
+.item-slot {
+  transition: transform 120ms steps(3);
+}
+.item-slot:hover {
+  transform: translateY(-3px);
+}
+.item-slot.is-selected {
+  outline: 3px solid var(--lime-deep);
+  outline-offset: 2px;
+  animation: item-bounce 600ms steps(4);
+}
+
+.xp-charge {
+  animation: xp-charge 2.4s steps(10) infinite alternate;
 }
 
 /* Rendered-markdown article body (blog posts) */
@@ -300,6 +362,34 @@ body::after {
   }
   to {
     transform: translateY(110vh) rotate(540deg);
+  }
+}
+
+@keyframes glint {
+  from {
+    transform: translateX(-60%);
+  }
+  to {
+    transform: translateX(60%);
+  }
+}
+
+@keyframes item-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes xp-charge {
+  from {
+    width: 35%;
+  }
+  to {
+    width: 70%;
   }
 }
 

@@ -1,12 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { projects, formatPeriod, type Project } from "@/data/projects";
 import { SectionTitle } from "@/components/section-title";
 import { useUi } from "@/components/ui-provider";
 import { ProjectPaper } from "@/components/project-paper";
 
 const PAGE_SIZE = 9;
+
+/** Lets other sections open a project's paper: openProject("talentern"). */
+export function openProject(slug: string) {
+  window.dispatchEvent(new CustomEvent("open-project", { detail: slug }));
+}
 
 const KIND_LABEL: Record<Project["kind"], string> = {
   work: "work",
@@ -44,6 +49,8 @@ export function Projects() {
   const [page, setPage] = useState(0);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  // Set when the paper was opened from outside this section.
+  const returnFocus = useRef<HTMLElement | null>(null);
   const { blip } = useUi();
 
   const pageCount = Math.ceil(projects.length / PAGE_SIZE);
@@ -57,12 +64,28 @@ export function Projects() {
     if (top < 0) sectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const i = projects.findIndex((p) => p.slug === (e as CustomEvent<string>).detail);
+      if (i < 0) return;
+      returnFocus.current = document.activeElement as HTMLElement | null;
+      setOpenIndex(i);
+      setPage(Math.floor(i / PAGE_SIZE));
+    };
+    window.addEventListener("open-project", onOpen);
+    return () => window.removeEventListener("open-project", onOpen);
+  }, []);
+
   const close = () => {
     const slug = openIndex !== null ? projects[openIndex].slug : null;
+    const origin = returnFocus.current;
+    returnFocus.current = null;
     setOpenIndex(null);
     blip("blip");
-    // Return focus to the card of whichever project was last open.
+    // Return focus to where the paper was opened from, or else to the card
+    // of whichever project was last open.
     requestAnimationFrame(() => {
+      if (origin) return origin.focus({ preventScroll: true });
       sectionRef.current
         ?.querySelector<HTMLButtonElement>(`[data-slug="${slug}"]`)
         ?.focus();
