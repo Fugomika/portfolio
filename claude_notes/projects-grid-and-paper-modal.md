@@ -6,7 +6,7 @@
   Connected, TIGOR, dst) → total 18 proyek. Data, tanggal, deskripsi, dan screenshot
   diambil dari `dev-files/json/projects.json` (sumber portfolio lama), jadi bukan karangan.
   Framing "kerja di Techno Infinity untuk klien X" dijaga lewat field `affiliation`.
-- **Grid 3×3 + pagination** (`src/components/projects.tsx`): 9 kartu per halaman,
+- **Kartu horizontal + pagination** (`src/components/projects.tsx`): gambar kiri, teks kanan, 2 kolom × 3 baris = 6 kartu per halaman (dulu 3×3; diganti biar kartunya lebih lebar),
   diurutkan terbaru dulu berdasarkan `start`. Ganti halaman → kalau kamu udah scroll
   lewat atas section, dia scroll balik ke judul "Projects".
 - **Modal ala paper** (`src/components/project-paper.tsx`): judul tengah, nama + afiliasi

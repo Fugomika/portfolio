@@ -6,7 +6,7 @@ import { SectionTitle } from "@/components/section-title";
 import { useUi } from "@/components/ui-provider";
 import { ProjectPaper } from "@/components/project-paper";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 6; // 3 rows of 2 horizontal cards
 
 /** Lets other sections open a project's paper: openProject("talentern"). */
 export function openProject(slug: string) {
@@ -27,7 +27,7 @@ function Cover({ project }: { project: Project }) {
         src={cover.src}
         alt=""
         loading="lazy"
-        className="aspect-video w-full border-b-2 border-line object-cover object-top transition-transform duration-300 group-hover:scale-[1.03]"
+        className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.04]"
       />
     );
   }
@@ -39,8 +39,8 @@ function Cover({ project }: { project: Project }) {
     .join("")
     .toUpperCase();
   return (
-    <div className="dither flex aspect-video w-full items-center justify-center border-b-2 border-line">
-      <span className="pixel-border bg-card px-3 py-1 font-display text-3xl">{initials}</span>
+    <div className="dither absolute inset-0 flex items-center justify-center">
+      <span className="pixel-border bg-card px-2 py-0.5 font-display text-2xl sm:text-3xl">{initials}</span>
     </div>
   );
 }
@@ -100,7 +100,7 @@ export function Projects() {
     >
       <SectionTitle eyebrow="select project" title="Projects" />
 
-      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-6 lg:grid-cols-2">
         {visible.map((p, i) => (
           <li key={p.slug}>
             <button
@@ -111,29 +111,28 @@ export function Projects() {
                 blip("toggle");
               }}
               aria-haspopup="dialog"
-              className="group pixel-border pixel-shadow pixel-press flex h-full w-full flex-col overflow-hidden bg-card text-left"
+              className="group pixel-border pixel-shadow pixel-press flex h-full min-h-44 w-full overflow-hidden bg-card text-left"
             >
-              <div className="relative overflow-hidden">
+              <div className="relative w-1/3 shrink-0 overflow-hidden border-r-2 sm:w-2/5 border-line">
                 <Cover project={p} />
-                <span className="absolute left-2 top-2 border-2 border-line bg-paper px-1.5 font-mono text-[11px] uppercase">
-                  {KIND_LABEL[p.kind]}
-                </span>
               </div>
-              <div className="flex grow flex-col gap-2 p-4">
-                <p className="font-mono text-xs text-ink-soft">{formatPeriod(p)}</p>
+              <div className="flex min-w-0 grow flex-col gap-1.5 p-4">
+                <p className="font-mono text-xs text-ink-soft">
+                  {formatPeriod(p)} · <span className="uppercase">{KIND_LABEL[p.kind]}</span>
+                </p>
                 <h3 className="font-display text-xl leading-tight group-hover:text-lime-deep">
                   {p.title}
                 </h3>
                 <p className="grow text-sm text-ink-soft">{p.tagline}</p>
                 <ul className="flex flex-wrap gap-1.5 pt-1" aria-label="Tech stack">
-                  {p.stack.slice(0, 3).map((tech) => (
+                  {p.stack.slice(0, 4).map((tech) => (
                     <li key={tech} className="border border-line px-1.5 py-0.5 font-mono text-[11px]">
                       {tech}
                     </li>
                   ))}
-                  {p.stack.length > 3 && (
+                  {p.stack.length > 4 && (
                     <li className="px-1 py-0.5 font-mono text-[11px] text-ink-soft">
-                      +{p.stack.length - 3}
+                      +{p.stack.length - 4}
                     </li>
                   )}
                 </ul>
