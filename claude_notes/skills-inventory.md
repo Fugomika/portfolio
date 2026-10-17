@@ -26,3 +26,10 @@ balik ke tombol yang diklik di Skills (pakai `preventScroll`), jadi halaman ngga
 Bevel retro (inset shadow terang kiri-atas, gelap kanan-bawah), item legendary ada kilau
 yang nyapu pakai `steps(12)`, item terpilih mantul, skill "Learning" punya bar XP yang
 ngecas. Semua mati otomatis kalau `prefers-reduced-motion`.
+
+## Ukuran tetap + pilihan "nempel" (update)
+- Panel inventory tingginya **fix** (`md:h-[400px]`); panel inspect yang `overflow-y-auto`,
+  jadi deskripsi panjang di-scroll di dalam, kartunya nggak ganti ukuran.
+- Pilihan cuma ganti kalau **diklik** (hover nggak lagi ngubah). Yang disimpan itu
+  *nama* skill, bukan index, jadi pindah tab pun deskripsinya tetap di skill yang dipilih
+  — dan item-nya tetap ke-highlight pas kamu balik ke tab-nya.

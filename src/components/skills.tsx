@@ -60,18 +60,19 @@ function Tile({
 
 export function Skills() {
   const [tab, setTab] = useState(0);
-  const [selected, setSelected] = useState(0);
+  // Selection is by name so it survives tab switches; only a click changes it.
+  const [selected, setSelected] = useState(groups[0].items[0].skill.name);
   const { blip } = useUi();
 
   const group = groups[tab];
-  const current = group.items[selected] ?? group.items[0];
+  const current =
+    groups.flatMap((g) => g.items).find((it) => it.skill.name === selected) ?? group.items[0];
   const empty = Math.max(0, MIN_SLOTS - group.items.length);
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   const switchTab = (next: number) => {
     const n = (next + groups.length) % groups.length;
     setTab(n);
-    setSelected(0);
     blip("toggle");
     document.getElementById(`skill-tab-${n}`)?.focus();
   };
@@ -115,23 +116,24 @@ export function Skills() {
           id="skill-panel"
           role="tabpanel"
           aria-labelledby={`skill-tab-${tab}`}
-          className="grid md:grid-cols-[1fr_300px]"
+          className="grid md:h-[400px] md:grid-cols-[1fr_300px]"
         >
           {/* Slots */}
-          <ul className="grid grid-cols-4 content-start gap-2 p-4 sm:grid-cols-5 sm:gap-3">
-            {group.items.map(({ skill, count, rarity }, i) => (
+          <ul className="grid max-h-[340px] grid-cols-4 content-start gap-2 overflow-y-auto p-4 sm:grid-cols-5 sm:gap-3 md:max-h-none">
+            {group.items.map(({ skill, count, rarity }) => (
               <li key={skill.name}>
                 <button
                   type="button"
                   onClick={() => {
-                    setSelected(i);
+                    setSelected(skill.name);
                     blip("blip");
                   }}
-                  onMouseEnter={() => setSelected(i)}
-                  aria-pressed={i === selected}
+                  aria-pressed={skill.name === current.skill.name}
                   aria-label={`${skill.name}, ${skill.learning ? "in progress" : rarity}`}
                   title={skill.name}
-                  className={`item-slot relative block w-full ${i === selected ? "is-selected" : ""}`}
+                  className={`item-slot relative block w-full ${
+                    skill.name === current.skill.name ? "is-selected" : ""
+                  }`}
                 >
                   <Tile short={skill.short} rarity={rarity} learning={skill.learning} />
                   {count > 0 && (
@@ -150,7 +152,7 @@ export function Skills() {
           {/* Inspect panel */}
           <aside
             aria-live="polite"
-            className="border-t-2 border-line p-4 md:border-l-2 md:border-t-0 sm:p-5"
+            className="h-[320px] overflow-y-auto border-t-2 border-line p-4 sm:p-5 md:h-auto md:border-l-2 md:border-t-0"
           >
             <div className="flex items-center gap-4">
               <div className="w-20 shrink-0">
@@ -188,7 +190,7 @@ export function Skills() {
             ) : (
               <div className="mt-5">
                 <p className="mb-2 font-mono text-xs text-ink-soft">found in</p>
-                <ul className="max-h-56 space-y-1 overflow-y-auto pr-1 text-sm">
+                <ul className="space-y-1 text-sm">
                   {current.found.map((p) => (
                     <li key={p.slug}>
                       <button
