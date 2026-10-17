@@ -1,14 +1,14 @@
 "use client";
 
 import { site } from "@/data/site";
-import { Robot } from "@/components/robot";
+import { Vinyl } from "@/components/vinyl";
 import { useUi } from "@/components/ui-provider";
 
 export function Hero() {
   const { blip } = useUi();
 
   return (
-    <section className="mx-auto grid max-w-5xl items-center gap-10 px-4 pb-16 pt-14 sm:px-6 md:grid-cols-[3fr_2fr] md:pt-20">
+    <section className="mx-auto grid max-w-5xl items-center gap-10 px-4 pb-16 pt-14 sm:px-6 md:grid-cols-[1fr_auto] md:pt-20">
       <div>
         <p className="mb-4 font-mono text-sm text-ink-soft">
           {"// software engineer @ "}
@@ -58,10 +58,7 @@ export function Hero() {
       </div>
 
       <div>
-        <Robot />
-        <p aria-hidden className="text-center font-mono text-xs text-ink-soft">
-          {"// try clicking the robot"}
-        </p>
+        <Vinyl />
       </div>
     </section>
   );

@@ -77,28 +77,31 @@ achievements. Notable decisions:
   ever runs after a user gesture with the toggle explicitly on (muted by default,
   persisted in localStorage).
 - **Achievements** persist to localStorage so you don't get spammed with the same
-  toast twice. Two exist: click the robot 5 times, and the Konami code
-  (↑↑↓↓←→←→BA — there's a hint in the footer).
+  toast twice. Two exist: "Crate digger" (play all three records) and the Konami code
+  (↑↑↓↓←→←→BA — there's a hint in the footer). Ids are typed with `satisfies`, so
+  `unlock("typo")` is a compile error.
 - **Scanlines** are a `body::before` overlay with a repeating-linear-gradient,
   toggled by a class on `<html>` — pure CSS, costs nothing when off.
 - The grain texture is an inline SVG `feTurbulence` data-URI on `body::after` at
   5% opacity. No image file.
 
-## The robot (`src/components/robot.tsx`)
+## The vinyl record (`src/components/vinyl.tsx`)
 
-The hero sprite is a fox-eared pixel robot — the same "robot fox" identity as
-the helmet avatar in the About section, so the site has one consistent mascot.
-It's an inline SVG drawn with `shape-rendering: crispEdges` (that's what keeps
-the rectangles pixel-sharp instead of antialiased). Idle animation (floating
-bob, blinking antenna beacon, occasional eye-blink) is plain CSS keyframes. The
-click spin uses Motion's spring, and the "signal ping" rings are short-lived
-DOM elements with a stepped scale animation — `steps(8)` easing makes the ring
-expand in discrete jumps, which reads as "retro" rather than smooth. The visor
-is a fixed dark color in both themes on purpose: it's a screen, and screens
-stay dark.
-
-Stars only render in dark mode (`hidden dark:block`) — the dark sky is what makes
-them make sense.
+The hero's right column is a record player (it replaced the old pixel robot).
+- **Centre label** = the current song's cover art plus a blinking **▶ START** button.
+  Pressing it plays the song and repaints the site in that song's palette; pressing again
+  pauses and brings your normal theme back. The button sits *above* the spinning label
+  and doesn't rotate itself, so START stays readable.
+- **‹ / ›** beside the record step through the fixed album:
+  Space Day → Iwatodai Dorm -Reload- → Sans → Space Day. When a song ends, the next starts.
+- **Spin**: grooves + label share one `vinyl-spin` keyframe. Pausing sets
+  `animation-play-state: paused`, so the record stops where it is instead of snapping back.
+  A `conic-gradient` sheen sits on top and does *not* rotate — that's what makes the
+  grooves look like they're turning under a light.
+- **Tonearm**: pixel SVG that swings onto the record while playing (−16° parked → 22°).
+- **Progress ring**: an SVG circle with `pathLength=100`, so `strokeDasharray =
+  progress*100` draws exactly that share of the circle.
+- The record is black in every theme, like the robot's visor was: it's an object, not UI.
 
 ## Motion / reduced motion
 
@@ -108,7 +111,7 @@ same API, imported from `motion/react`). Two layers of reduced-motion support:
 1. A global CSS `@media (prefers-reduced-motion: reduce)` kill-switch that
    flattens all CSS animations/transitions.
 2. `useReducedMotion()` in components that drive JS animation: the robot
-   skips its spin, project cards skip the expand spring (content just appears),
+   label cover just swaps instead of cross-fading, project cards skip the expand spring,
    confetti never renders.
 
 ## Accessibility checklist (verified in browser)

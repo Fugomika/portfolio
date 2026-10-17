@@ -345,18 +345,6 @@ body::after {
   }
 }
 
-@keyframes beacon-blink {
-  0%,
-  70%,
-  100% {
-    opacity: 1;
-  }
-  75%,
-  95% {
-    opacity: 0.15;
-  }
-}
-
 @keyframes star-twinkle {
   0%,
   100% {
@@ -364,29 +352,6 @@ body::after {
   }
   50% {
     opacity: 0.15;
-  }
-}
-
-@keyframes eye-blink {
-  0%,
-  90%,
-  100% {
-    opacity: 1;
-  }
-  93%,
-  97% {
-    opacity: 0.1;
-  }
-}
-
-@keyframes ping-ring {
-  from {
-    transform: scale(0.4);
-    opacity: 0.9;
-  }
-  to {
-    transform: scale(2.6);
-    opacity: 0;
   }
 }
 
@@ -462,6 +427,44 @@ body::after {
 
 .cover-bob {
   animation: float-bob 2.4s steps(6) infinite;
+}
+
+/* --- Vinyl record (hero) --- */
+.vinyl-disc {
+  /* Stays a black record in every theme, like a real one */
+  background:
+    radial-gradient(circle, transparent 0 30%, #0b0b0b 30% 33%, transparent 33% 100%),
+    radial-gradient(circle, transparent 0 62%, #0b0b0b 62% 63.5%, transparent 63.5% 100%),
+    repeating-radial-gradient(circle, #141414 0 2px, #1e1e1e 2px 3px);
+  box-shadow:
+    0 0 0 2px var(--line),
+    6px 6px 0 0 var(--shadow);
+}
+.vinyl-sheen {
+  background: conic-gradient(
+    from 20deg,
+    transparent 0 8%,
+    rgb(255 255 255 / 0.13) 13%,
+    transparent 19% 50%,
+    rgb(255 255 255 / 0.08) 63%,
+    transparent 69% 100%
+  );
+}
+.vinyl-spin {
+  animation: vinyl-spin 2.4s linear infinite;
+}
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.start-blink {
+  animation: start-blink 1.4s steps(2) infinite;
+}
+@keyframes start-blink {
+  50% {
+    opacity: 0.55;
+  }
 }
 
 .shooting-star {
