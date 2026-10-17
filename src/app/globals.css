@@ -469,6 +469,27 @@ body::after {
   }
 }
 
+/* Terraria: floating islands bob, wyverns fly a wavy offset-path */
+@keyframes island-bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-12px);
+  }
+}
+/* Each segment runs the same path, a little later than the one ahead of it,
+   so the body follows the head. 0-70% is the flight; then it waits off-screen. */
+@keyframes wyvern-fly {
+  0% {
+    offset-distance: 0%;
+  }
+  70%,
+  100% {
+    offset-distance: 100%;
+  }
+}
+
 /* Sans: bones sliding across, like the battle box */
 @keyframes bone-ltr {
   from {

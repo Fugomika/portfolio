@@ -16,7 +16,7 @@
 
 | Lagu | File | Cover | Palet | Efek |
 |---|---|---|---|---|
-| Space Day | `Space Day.mp3` | `Terraria.jpeg` | biru-ungu gelap | bintang + bintang jatuh |
+| Space Day | `Space Day.mp3` | `Terraria.jpeg` | biru-ungu gelap | bintang, bintang jatuh, **pulau melayang**, **wyvern** |
 | Iwatodai Dorm -Reload- | `Iwatodai Dorm.mp3` | `Persona.jpeg` | biru & putih | partikel cahaya naik (5–9px) |
 | Song That Plays When Somebody Verses Sans | `Song That Plays When Somebody Verses Sans.mp3` | `Undertale.png` | hitam & putih | **tulang-tulang** lewat + garis glitch |
 
@@ -51,6 +51,19 @@ Tiga hal yang dulu "loncat" sekarang memudar bareng:
   background (rAF berhenti di tab yang nggak kelihatan → lagunya nggak jadi ke-pause).
 - **Efek latar**: layer efek di-*key* per jenis efek di dalam `AnimatePresence`, jadi
   bintang memudar keluar sambil partikel/tulang memudar masuk (1,4 dtk).
+
+### Pulau melayang & wyvern (Space Day)
+- **Pulau**: SVG piksel (rumput, tanah, batu yang makin runcing ke bawah, pohon, rumah
+  bata kecil) yang naik-turun pelan. Sengaja ditaruh di **margin kiri/kanan** di luar
+  kolom konten 1024px biar nggak nutupin teks — konsekuensinya cuma muncul di layar lebar
+  (≥1280px, `xl:`).
+- **Wyvern**: 12 potongan (kepala, badan, badan berkaki, ekor) yang semuanya jalan di
+  **satu jalur bergelombang yang sama** pakai CSS `offset-path`, tiap potongan telat 0,12
+  detik dari yang di depannya — jadi badannya ngikutin kepala kayak ular beneran.
+  `offset-rotate: auto` bikin tiap potongan miring sesuai arah jalurnya. Jalurnya ~3.600px
+  dan terbang 70% dari 28 dtk (~185px/dtk), jadi 0,12 dtk ≈ 22px antar potongan (potongannya
+  32px, jadi sedikit numpuk). Warnanya tetap (putih-ungu kayak di Terraria), bukan ikut palet.
+  Tiap potongan punya garis gelap di sisi belakang, biar keliatan beruas, bukan pipa putih.
 
 ### Tulang Sans
 `<Bone>` = SVG piksel (dua kenop di tiap ujung + batang). 12 tulang dengan tinggi acak
