@@ -26,7 +26,7 @@ export function Hero() {
           <a
             href="#contact"
             onClick={() => blip()}
-            className="pixel-border pixel-shadow pixel-press inline-block bg-lime px-6 py-3 font-display text-lg text-[#26221a]"
+            className="pixel-border pixel-shadow pixel-press inline-block bg-lime px-6 py-3 font-display text-lg text-on-lime"
           >
             Get in touch
           </a>

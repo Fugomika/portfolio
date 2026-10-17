@@ -35,7 +35,7 @@ export function Contact() {
           <a
             href={`mailto:${site.email}`}
             onClick={() => blip()}
-            className="pixel-border pixel-shadow-sm pixel-press inline-block bg-lime px-5 py-2.5 font-mono text-sm text-[#26221a] sm:text-base"
+            className="pixel-border pixel-shadow-sm pixel-press inline-block bg-lime px-5 py-2.5 font-mono text-sm text-on-lime sm:text-base"
           >
             {site.email}
           </a>

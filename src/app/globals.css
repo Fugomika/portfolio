@@ -1,6 +1,32 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* "dark" means the dark theme, unless a music palette is active — then the
+   palette's own scheme decides (see music-provider.tsx). */
+@custom-variant dark (&:where(
+  .dark:not([data-music-scheme="light"]),
+  .dark:not([data-music-scheme="light"]) *,
+  [data-music-scheme="dark"],
+  [data-music-scheme="dark"] *
+));
+
+/* Registered so music palettes can fade the whole site between colours */
+@property --paper { syntax: "<color>"; inherits: true; initial-value: #f7f2e5; }
+@property --card { syntax: "<color>"; inherits: true; initial-value: #fffbef; }
+@property --ink { syntax: "<color>"; inherits: true; initial-value: #26221a; }
+@property --ink-soft { syntax: "<color>"; inherits: true; initial-value: #6f6754; }
+@property --line { syntax: "<color>"; inherits: true; initial-value: #26221a; }
+@property --lime { syntax: "<color>"; inherits: true; initial-value: #b8e62e; }
+@property --lime-deep { syntax: "<color>"; inherits: true; initial-value: #4c7a06; }
+@property --amber { syntax: "<color>"; inherits: true; initial-value: #ffb454; }
+@property --shadow { syntax: "<color>"; inherits: true; initial-value: #26221a; }
+@property --on-lime { syntax: "<color>"; inherits: true; initial-value: #26221a; }
+
+:root[data-music-fade] {
+  transition:
+    --paper 900ms ease, --card 900ms ease, --ink 900ms ease, --ink-soft 900ms ease,
+    --line 900ms ease, --lime 900ms ease, --lime-deep 900ms ease, --amber 900ms ease,
+    --shadow 900ms ease, --on-lime 900ms ease;
+}
 
 :root {
   --paper: #f7f2e5;
@@ -12,6 +38,7 @@
   --lime-deep: #4c7a06;
   --amber: #ffb454;
   --shadow: #26221a;
+  --on-lime: #26221a;
   --r-common: #8a826c;
   --r-rare: #2f7fd8;
   --r-epic: #9b4fd6;
@@ -43,6 +70,7 @@
   --color-lime: var(--lime);
   --color-lime-deep: var(--lime-deep);
   --color-amber: var(--amber);
+  --color-on-lime: var(--on-lime);
   --font-display: var(--font-pixel);
   --font-sans: var(--font-body);
   --font-mono: var(--font-plex-mono);
@@ -105,7 +133,7 @@ body::after {
 
 ::selection {
   background: var(--lime);
-  color: #26221a;
+  color: var(--on-lime);
 }
 
 @utility pixel-border {
@@ -396,6 +424,92 @@ body::after {
   }
   to {
     width: 70%;
+  }
+}
+
+/* --- Music player + per-track ambient effects --- */
+.eq-bar {
+  animation: eq-bounce 0.9s steps(4) infinite alternate;
+}
+@keyframes eq-bounce {
+  from {
+    height: 20%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+.marquee-run {
+  display: inline-block;
+  animation: marquee 8s linear infinite;
+}
+.marquee-run > span {
+  padding-right: 0.5rem;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.shooting-star {
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, var(--ink));
+  transform: rotate(-30deg);
+  animation: shoot 9s steps(16) infinite;
+}
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0;
+    translate: -320px 185px;
+  }
+  100% {
+    opacity: 0;
+    translate: -320px 185px;
+  }
+}
+
+@keyframes mote-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-110vh);
+  }
+}
+
+.glitch-bar {
+  top: 0;
+  opacity: 0;
+  animation-name: glitch-sweep;
+  animation-timing-function: steps(24);
+  animation-iteration-count: infinite;
+}
+@keyframes glitch-sweep {
+  0%,
+  70% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  71% {
+    opacity: 0.18;
+  }
+  85% {
+    opacity: 0.1;
+    transform: translateY(100vh);
+  }
+  86%,
+  100% {
+    opacity: 0;
+    transform: translateY(100vh);
   }
 }
 

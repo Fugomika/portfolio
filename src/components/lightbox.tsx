@@ -119,7 +119,7 @@ export function Lightbox({
                   href={current.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="pixel-border pixel-shadow-sm pixel-press inline-block bg-lime px-3 py-1.5 font-mono text-sm text-[#26221a]"
+                  className="pixel-border pixel-shadow-sm pixel-press inline-block bg-lime px-3 py-1.5 font-mono text-sm text-on-lime"
                 >
                   Visit live ↗
                 </a>

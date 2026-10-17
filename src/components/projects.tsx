@@ -164,7 +164,7 @@ export function Projects() {
               aria-current={n === page ? "page" : undefined}
               aria-label={`Page ${n + 1}`}
               className={`pixel-border pixel-shadow-sm pixel-press h-9 min-w-9 px-2 ${
-                n === page ? "bg-lime text-[#26221a]" : "bg-card"
+                n === page ? "bg-lime text-on-lime" : "bg-card"
               }`}
             >
               {n + 1}

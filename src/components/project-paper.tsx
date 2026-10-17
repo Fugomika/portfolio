@@ -152,7 +152,7 @@ export function ProjectPaper({
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className="pixel-border pixel-press h-8 w-8 bg-lime text-[#26221a]"
+                    className="pixel-border pixel-press h-8 w-8 bg-lime text-on-lime"
                   >
                     ✕
                   </button>

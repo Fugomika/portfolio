@@ -85,7 +85,7 @@ function Toggle({
       aria-label={label}
       title={label}
       className={`pixel-border pixel-shadow-sm pixel-press flex h-9 w-9 items-center justify-center font-mono text-sm ${
-        pressed ? "bg-lime text-[#26221a]" : "bg-card"
+        pressed ? "bg-lime text-on-lime" : "bg-card"
       }`}
     >
       {children}
@@ -101,7 +101,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b-2 border-line bg-paper/95 backdrop-blur-sm">
       <a
         href="#main"
-        className="absolute left-2 top-2 -translate-y-20 bg-lime px-3 py-2 font-mono text-sm text-[#26221a] focus:translate-y-0"
+        className="absolute left-2 top-2 -translate-y-20 bg-lime px-3 py-2 font-mono text-sm text-on-lime focus:translate-y-0"
       >
         Skip to content
       </a>

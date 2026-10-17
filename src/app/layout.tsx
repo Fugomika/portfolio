@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Pixelify_Sans, Nunito_Sans, IBM_Plex_Mono, Source_Serif_4 } from "next/font/google";
 import { UiProvider } from "@/components/ui-provider";
+import { MusicProvider } from "@/components/music-provider";
+import { MusicFx } from "@/components/music-fx";
+import { MusicPlayer } from "@/components/music-player";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -57,7 +60,13 @@ export default function RootLayout({
       </head>
       {/* Extensions like Grammarly and ColorZilla inject attributes on body */}
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <UiProvider>{children}</UiProvider>
+        <UiProvider>
+          <MusicProvider>
+            {children}
+            <MusicFx />
+            <MusicPlayer />
+          </MusicProvider>
+        </UiProvider>
       </body>
     </html>
   );
