@@ -453,6 +453,13 @@ body::after {
   }
 }
 
+/* YouTube needs a >=200x200 viewport; fill the player card's width */
+.yt-screen iframe {
+  display: block;
+  width: 100%;
+  height: 200px;
+}
+
 .shooting-star {
   opacity: 0;
   background: linear-gradient(90deg, transparent, var(--ink));

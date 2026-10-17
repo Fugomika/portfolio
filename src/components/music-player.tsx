@@ -53,121 +53,133 @@ export function MusicPlayer() {
 
   return (
     <div className="fixed bottom-4 left-4 z-[80] flex flex-col items-start gap-2">
-      {/* YouTube's player must stay mounted and visible while it plays. */}
-      <div
-        ref={youtubeHost}
-        aria-label="YouTube player"
-        className={`pixel-border pixel-shadow-sm h-[204px] w-[204px] bg-card ${youtubeVisible ? "" : "hidden"}`}
-      />
-
-      <AnimatePresence>
+      {/* One card that never unmounts: the YouTube iframe inside it would
+          reload if it moved, and YouTube requires it to stay visible while it
+          plays — so collapsing the panel shrinks the card to just the screen. */}
+      <section
+        aria-label="Music player"
+        className={`pixel-border pixel-shadow w-[min(18rem,calc(100vw-2rem))] bg-card ${
+          open || youtubeVisible ? "" : "hidden"
+        }`}
+      >
         {open && (
-          <motion.section
-            aria-label="Music player"
-            initial={reducedMotion ? false : { y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={reducedMotion ? undefined : { y: 16, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="pixel-border pixel-shadow w-[min(18rem,calc(100vw-2rem))] bg-card"
-          >
-            <div className="flex items-center justify-between border-b-2 border-line px-3 py-2 font-mono text-xs">
-              <span>fugo.fm</span>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close music player"
-                className="h-6 w-6 hover:text-lime-deep"
-              >
-                ✕
-              </button>
-            </div>
+          <div className="flex items-center justify-between border-b-2 border-line px-3 py-2 font-mono text-xs">
+            <span>fugo.fm</span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close music player"
+              className="h-6 w-6 hover:text-lime-deep"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
-            <div className="p-3">
-              <p aria-live="polite" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
-                {STATUS[status]}
-              </p>
-              <div className="mt-1 overflow-hidden whitespace-nowrap font-display text-lg" title={track.title}>
-                {on && !reducedMotion ? (
-                  // Two copies scrolling by exactly one copy's width = seamless loop.
-                  <p className="marquee-run" aria-label={track.title}>
-                    <span aria-hidden>{track.title} ✦ </span>
-                    <span aria-hidden>{track.title} ✦ </span>
-                  </p>
-                ) : (
-                  <p className="truncate">{track.title}</p>
-                )}
-              </div>
-              <p className="truncate font-mono text-[11px] text-ink-soft">{track.credit}</p>
+        <div
+          ref={youtubeHost}
+          aria-label="YouTube player"
+          className={`yt-screen border-line bg-[#000] ${youtubeVisible ? "" : "hidden"} ${
+            open ? "border-b-2" : ""
+          }`}
+        />
 
-              <div className="mt-3 flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    step(-1);
-                    blip();
-                  }}
-                  aria-label="Previous track"
-                  className="pixel-border pixel-shadow-sm pixel-press h-9 w-9 bg-paper font-mono"
-                >
-                  ‹‹
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggle();
-                    blip("toggle");
-                  }}
-                  aria-label={on ? "Pause music" : "Play music"}
-                  aria-pressed={on}
-                  className="pixel-border pixel-shadow-sm pixel-press h-11 w-14 bg-lime font-mono text-lg text-on-lime"
-                >
-                  {on ? "❚❚" : "▶"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    step(1);
-                    blip();
-                  }}
-                  aria-label="Next track"
-                  className="pixel-border pixel-shadow-sm pixel-press h-9 w-9 bg-paper font-mono"
-                >
-                  ››
-                </button>
-              </div>
-            </div>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 34 }}
+              className="overflow-hidden"
+            >
+              <div className="p-3">
+                <p aria-live="polite" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
+                  {STATUS[status]}
+                </p>
+                <div className="mt-1 overflow-hidden whitespace-nowrap font-display text-lg" title={track.title}>
+                  {on && !reducedMotion ? (
+                    // Two copies scrolling by exactly one copy's width = seamless loop.
+                    <p className="marquee-run" aria-label={track.title}>
+                      <span aria-hidden>{track.title} ✦ </span>
+                      <span aria-hidden>{track.title} ✦ </span>
+                    </p>
+                  ) : (
+                    <p className="truncate">{track.title}</p>
+                  )}
+                </div>
+                <p className="truncate font-mono text-[11px] text-ink-soft">{track.credit}</p>
 
-            <ol className="max-h-48 overflow-y-auto border-t-2 border-dashed border-line py-1">
-              {tracks.map((t, i) => (
-                <li key={t.id}>
+                <div className="mt-3 flex items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      select(i);
+                      step(-1);
                       blip();
                     }}
-                    aria-current={i === index ? "true" : undefined}
-                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm ${
-                      i === index ? "bg-lime text-on-lime" : "hover:bg-paper"
-                    }`}
+                    aria-label="Previous track"
+                    className="pixel-border pixel-shadow-sm pixel-press h-9 w-9 bg-paper font-mono"
                   >
-                    {/* Palette preview: background, ink, accent */}
-                    <span aria-hidden className="flex shrink-0 border border-current">
-                      {[t.palette.paper, t.palette.ink, t.palette.lime].map((c, k) => (
-                        <span key={k} className="block h-3 w-2" style={{ background: c }} />
-                      ))}
-                    </span>
-                    <span className="truncate">{t.title}</span>
-                    {!t.source && (
-                      <span className="ml-auto shrink-0 font-mono text-[10px] opacity-70">no audio</span>
-                    )}
+                    ‹‹
                   </button>
-                </li>
-              ))}
-            </ol>
-          </motion.section>
-        )}
-      </AnimatePresence>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toggle();
+                      blip("toggle");
+                    }}
+                    aria-label={on ? "Pause music" : "Play music"}
+                    aria-pressed={on}
+                    className="pixel-border pixel-shadow-sm pixel-press h-11 w-14 bg-lime font-mono text-lg text-on-lime"
+                  >
+                    {on ? "❚❚" : "▶"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      step(1);
+                      blip();
+                    }}
+                    aria-label="Next track"
+                    className="pixel-border pixel-shadow-sm pixel-press h-9 w-9 bg-paper font-mono"
+                  >
+                    ››
+                  </button>
+                </div>
+              </div>
+
+              <ol className="max-h-48 overflow-y-auto border-t-2 border-dashed border-line py-1">
+                {tracks.map((t, i) => (
+                  <li key={t.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        select(i);
+                        blip();
+                      }}
+                      aria-current={i === index ? "true" : undefined}
+                      className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm ${
+                        i === index ? "bg-lime text-on-lime" : "hover:bg-paper"
+                      }`}
+                    >
+                      {/* Palette preview: background, ink, accent */}
+                      <span aria-hidden className="flex shrink-0 border border-current">
+                        {[t.palette.paper, t.palette.ink, t.palette.lime].map((c, k) => (
+                          <span key={k} className="block h-3 w-2" style={{ background: c }} />
+                        ))}
+                      </span>
+                      <span className="truncate">{t.title}</span>
+                      {!t.source && (
+                        <span className="ml-auto shrink-0 font-mono text-[10px] opacity-70">no audio</span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
 
       <button
         type="button"

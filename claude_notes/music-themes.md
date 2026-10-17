@@ -13,18 +13,34 @@
   sengaja **nggak** disimpan: browser ngeblok autoplay bersuara, jadi musik baru bisa
   mulai setelah pengunjung klik ▶.
 
-## Nambah audio (masih kosong — "theme only")
-Di `src/data/music.ts`, isi `source` di track-nya, pilih salah satu:
-```ts
-source: { kind: "youtube", videoId: "xxxxxxxxxxx" }, // dari youtube.com/watch?v=xxxxxxxxxxx
-source: { kind: "file", src: "/music/space.mp3" },   // file di public/music/
-```
-Dua-duanya sudah dites jalan (pakai file tes & video YouTube tes, lalu dihapus lagi).
-- **YouTube**: aturan YouTube mewajibkan player-nya kelihatan (≥200×200), jadi pas lagu
-  YouTube main, video kecil muncul di atas player. Nggak ada file di repo-mu.
-- **File**: player full custom, tanpa iklan — tapi lagu-lagu ini berhak cipta (Atlus,
-  Toby Fox, Re-Logic); nge-host MP3-nya di GitHub Pages publik = risiko DMCA.
-Nambah lagu baru = tambah objek di array `tracks` (judul, credit, `palette`, `effect`).
+## Sumber audio: YouTube
+Semua lagu sekarang pakai embed YouTube (`src/data/music.ts`):
+
+| Lagu | Video | Channel |
+|---|---|---|
+| Space | `vdKdgAbluyo` | Re-Logic - Topic (resmi) |
+| Iwatodai Dorm | `zByoptQ2sS0` | ATLUS Sound Team - Topic (resmi) |
+| Megalovania (jazz) | `1JbKOeeGRAM` | insaneintherainmusic (arranger-nya, di-endorse Toby Fox) |
+| Megalovania (slowed) | `R6l8LIk8Vas` | Mr.Blackhole (fan edit — versi slowed resmi nggak ada) |
+
+Dipilih yang resmi kalau ada, karena upload fan lebih gampang ke-takedown.
+Tiap ID dicek dua kali: (1) endpoint oEmbed YouTube (cuma jawab kalau video ada & boleh
+di-embed), (2) beneran diputar di browser sampai status "now playing" — karena video
+"Topic" kadang lolos oEmbed tapi tetap diblok label musiknya.
+
+**Kalau suatu saat ada lagu yang nggak mau main** (statusnya "couldn't play this track"),
+kemungkinan videonya dihapus/diblok — tinggal ganti `videoId`-nya.
+
+### Videonya ditaruh di mana
+YouTube mewajibkan player-nya kelihatan (min 200×200) selama main. Jadi videonya jadi
+**"layar" di dalam kartu player**: panel kebuka → layar di atas, kontrol di bawah;
+panel ditutup → kartunya mengecil jadi layar aja (musik tetap jalan). Pause → layarnya
+hilang. Elemen `div` tempat iframe nempel nggak pernah dipindah/di-unmount — iframe yang
+dipindah di DOM itu reload, dan lagunya bakal mulai dari awal.
+
+### Mau ganti ke file sendiri?
+`source: { kind: "file", src: "/music/nama.mp3" }` + taruh file di `public/music/`.
+(Ingat soal hak cipta kalau repo-nya publik.)
 
 ## Bagian teknis yang menarik
 - **Fade satu web**: warna-warna (`--paper`, `--ink`, `--lime`, …) didaftarkan pakai

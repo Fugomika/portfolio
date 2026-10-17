@@ -51,6 +51,7 @@ export const tracks: Track[] = [
     id: "terraria-space",
     title: "Space",
     credit: "Terraria OST — Scott Lloyd Shelly",
+    source: { kind: "youtube", videoId: "vdKdgAbluyo" },
     palette: {
       scheme: "dark",
       paper: "#0c0a24",
@@ -70,6 +71,7 @@ export const tracks: Track[] = [
     id: "iwatodai-dorm",
     title: "Iwatodai Dorm",
     credit: "Persona 3 OST — Shoji Meguro",
+    source: { kind: "youtube", videoId: "zByoptQ2sS0" },
     palette: {
       scheme: "light",
       paper: "#eef4ff",
@@ -88,14 +90,16 @@ export const tracks: Track[] = [
   {
     id: "megalovania-jazz",
     title: "Megalovania (jazz)",
-    credit: "Undertale — Toby Fox, jazz arrangement",
+    credit: "Undertale — Toby Fox, jazz cover by insaneintherainmusic",
+    source: { kind: "youtube", videoId: "1JbKOeeGRAM" },
     palette: monochrome,
     effect: "glitch",
   },
   {
     id: "megalovania-slowed",
     title: "Megalovania (slowed)",
-    credit: "Undertale — Toby Fox, slowed",
+    credit: "Undertale — Toby Fox, slowed edit by Mr.Blackhole",
+    source: { kind: "youtube", videoId: "R6l8LIk8Vas" },
     palette: monochrome,
     effect: "glitch",
   },
