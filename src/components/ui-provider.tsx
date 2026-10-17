@@ -86,6 +86,24 @@ export function UiProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Keep <meta name="theme-color"> (the phone's status bar / browser chrome)
+  // matching the page: a song palette's paper while one is active, else the
+  // light or dark paper.
+  useEffect(() => {
+    const root = document.documentElement;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (!meta) return;
+    const sync = () => {
+      meta.content =
+        root.style.getPropertyValue("--paper") ||
+        (root.classList.contains("dark") ? "#171522" : "#f7f2e5");
+    };
+    sync();
+    const mo = new MutationObserver(sync);
+    mo.observe(root, { attributes: true, attributeFilter: ["class", "style"] });
+    return () => mo.disconnect();
+  }, []);
+
   const blip = useCallback(
     (kind: Parameters<typeof playSfx>[0] = "blip") => {
       if (sfx) playSfx(kind);

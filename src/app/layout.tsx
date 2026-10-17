@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Pixelify_Sans, Nunito_Sans, IBM_Plex_Mono, Source_Serif_4 } from "next/font/google";
 import { UiProvider } from "@/components/ui-provider";
 import { MusicProvider } from "@/components/music-provider";
@@ -30,6 +30,14 @@ const serif = Source_Serif_4({
   subsets: ["latin"],
   style: ["normal", "italic"],
 });
+
+// Draw under the iPhone status bar (the header pads itself by the safe area).
+// theme-color starts as the light paper colour; UiProvider keeps it in sync
+// with dark mode and the song palettes.
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: "#f7f2e5",
+};
 
 export const metadata: Metadata = {
   title: `${site.handle} — ${site.name}`,

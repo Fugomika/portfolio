@@ -104,7 +104,9 @@ export function Header() {
   const { on: musicOn } = useMusic();
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-line bg-paper/95 backdrop-blur-sm">
+    // Solid (not translucent) so text never shows through, and padded by the
+    // safe area so it also covers the iPhone status-bar strip (viewport-fit=cover).
+    <header className="sticky top-0 z-50 border-b-2 border-line bg-paper pt-[env(safe-area-inset-top)]">
       <a
         href="#main"
         className="absolute left-2 top-2 -translate-y-20 bg-lime px-3 py-2 font-mono text-sm text-on-lime focus:translate-y-0"

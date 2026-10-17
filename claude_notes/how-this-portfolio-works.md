@@ -67,6 +67,17 @@ Defaults for a fresh visitor: **light theme** (dark only if they've explicitly
 chosen it — the OS preference is deliberately ignored) and **scanlines on**
 (off only if they've toggled them off before).
 
+## Header on iPhone (status bar + theme-color)
+
+iOS 26 Safari draws the page under the status bar, so content used to scroll visibly
+above the navbar, and the 95%-opaque navbar let text show through. Now:
+- `export const viewport = { viewportFit: "cover" }` in `layout.tsx` lets the page own
+  that strip, and the header pads itself with `env(safe-area-inset-top)` so its
+  **solid** background covers it.
+- `<meta name="theme-color">` (the status bar / browser chrome tint) is kept in sync by a
+  `MutationObserver` in `UiProvider`: the song palette's paper while music plays, else
+  the light or dark paper. It follows the site's own theme toggle, not the OS setting.
+
 ## The interaction layer (`src/components/ui-provider.tsx`)
 
 One React context owns all the "game feel" state: dark mode, scanlines, SFX,
