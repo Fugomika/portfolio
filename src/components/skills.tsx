@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { skillGroups, type Skill } from "@/data/skills";
 import { projects, formatPeriod, type Project } from "@/data/projects";
 import { SectionTitle } from "@/components/section-title";
@@ -10,6 +10,7 @@ import { openProject } from "@/components/projects";
 type Rarity = "common" | "rare" | "epic" | "legendary";
 
 const MIN_SLOTS = 10; // pad each tab with empty slots so it reads as a bag
+const STORAGE_KEY = "fugo_skill";
 
 // Where a skill was used, derived from the project stacks — nothing hand-rated.
 function usedIn(skill: Skill): Project[] {
@@ -60,13 +61,40 @@ function Tile({
 
 export function Skills() {
   const [tab, setTab] = useState(0);
-  // Selection is by name so it survives tab switches; only a click changes it.
-  const [selected, setSelected] = useState(groups[0].items[0].skill.name);
+  // Clicking pins an item (persisted); hovering previews another without
+  // losing the pin. Both are tracked by name so they survive tab switches.
+  const [pinned, setPinned] = useState(groups[0].items[0].skill.name);
+  const [hovered, setHovered] = useState<string | null>(null);
   const { blip } = useUi();
 
+  // Restore the last pinned item (and open its tab) once on the client.
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(STORAGE_KEY);
+    } catch {}
+    const groupIndex = groups.findIndex((g) => g.items.some((it) => it.skill.name === saved));
+    if (saved && groupIndex >= 0) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setPinned(saved);
+      setTab(groupIndex);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, []);
+
+  const pin = (name: string) => {
+    setPinned(name);
+    try {
+      localStorage.setItem(STORAGE_KEY, name);
+    } catch {}
+    blip("blip");
+  };
+
   const group = groups[tab];
+  const shown = hovered ?? pinned;
   const current =
-    groups.flatMap((g) => g.items).find((it) => it.skill.name === selected) ?? group.items[0];
+    groups.flatMap((g) => g.items).find((it) => it.skill.name === shown) ?? group.items[0];
+  const previewing = shown !== pinned;
   const empty = Math.max(0, MIN_SLOTS - group.items.length);
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
@@ -119,21 +147,21 @@ export function Skills() {
           className="grid md:h-[400px] md:grid-cols-[1fr_300px]"
         >
           {/* Slots */}
-          <ul className="grid max-h-[340px] grid-cols-4 content-start gap-2 overflow-y-auto p-4 sm:grid-cols-5 sm:gap-3 md:max-h-none">
+          <ul
+            onMouseLeave={() => setHovered(null)}
+            className="grid max-h-[340px] grid-cols-4 content-start gap-2 overflow-y-auto p-4 sm:grid-cols-5 sm:gap-3 md:max-h-none">
             {group.items.map(({ skill, count, rarity }) => (
               <li key={skill.name}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelected(skill.name);
-                    blip("blip");
-                  }}
-                  aria-pressed={skill.name === current.skill.name}
+                  onClick={() => pin(skill.name)}
+                  onMouseEnter={() => setHovered(skill.name)}
+                  aria-pressed={skill.name === pinned}
                   aria-label={`${skill.name}, ${skill.learning ? "in progress" : rarity}`}
                   title={skill.name}
                   className={`item-slot relative block w-full ${
-                    skill.name === current.skill.name ? "is-selected" : ""
-                  }`}
+                    skill.name === pinned ? "is-selected" : ""
+                  } ${skill.name === hovered && skill.name !== pinned ? "is-previewing" : ""}`}
                 >
                   <Tile short={skill.short} rarity={rarity} learning={skill.learning} />
                   {count > 0 && (
@@ -171,6 +199,9 @@ export function Skills() {
                 >
                   {current.skill.learning ? "quest in progress" : current.rarity}
                   {current.count > 0 && ` · stack ×${current.count}`}
+                </p>
+                <p className="mt-1 font-mono text-[11px] text-ink-soft">
+                  {previewing ? "previewing · click to pin" : "★ pinned"}
                 </p>
               </div>
             </div>

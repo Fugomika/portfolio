@@ -30,6 +30,12 @@ ngecas. Semua mati otomatis kalau `prefers-reduced-motion`.
 ## Ukuran tetap + pilihan "nempel" (update)
 - Panel inventory tingginya **fix** (`md:h-[400px]`); panel inspect yang `overflow-y-auto`,
   jadi deskripsi panjang di-scroll di dalam, kartunya nggak ganti ukuran.
-- Pilihan cuma ganti kalau **diklik** (hover nggak lagi ngubah). Yang disimpan itu
-  *nama* skill, bukan index, jadi pindah tab pun deskripsinya tetap di skill yang dipilih
-  — dan item-nya tetap ke-highlight pas kamu balik ke tab-nya.
+- **Hover = preview, klik = pin.** Hover item → panel nunjukin item itu (outline hijau
+  putus-putus, tulisan "previewing · click to pin"). Kursor keluar dari grid → panel balik
+  ke item yang terakhir **diklik** (outline hijau solid, "★ pinned").
+- Pin disimpan di `localStorage` (`fugo_skill`), sama kayak tema/scanlines/SFX. Pas reload,
+  item & tab-nya kebuka lagi. Dibaca sekali di `useEffect` setelah mount (bukan di
+  `useState` awal) supaya HTML server = HTML client → nggak ada hydration mismatch.
+- Yang disimpan itu *nama* skill, bukan index, jadi pindah tab pun pin-nya tetap.
+- Link "found in" cuma bisa diklik buat item yang di-pin (karena begitu kursor pindah ke
+  panel, preview balik ke pin) — makanya ada hint "click to pin".

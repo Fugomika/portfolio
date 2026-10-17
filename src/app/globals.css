@@ -201,6 +201,12 @@ body::after {
   animation: item-bounce 600ms steps(4);
 }
 
+/* Hover preview: dashed hint, distinct from the solid green pin */
+.item-slot.is-previewing {
+  outline: 2px dashed var(--lime-deep);
+  outline-offset: 2px;
+}
+
 .xp-charge {
   animation: xp-charge 2.4s steps(10) infinite alternate;
 }
