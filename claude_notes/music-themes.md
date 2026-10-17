@@ -13,34 +13,45 @@
   sengaja **nggak** disimpan: browser ngeblok autoplay bersuara, jadi musik baru bisa
   mulai setelah pengunjung klik ▶.
 
-## Sumber audio: YouTube
-Semua lagu sekarang pakai embed YouTube (`src/data/music.ts`):
+## Sumber audio: file kamu sendiri (+ 2 dari YouTube)
 
-| Lagu | Video | Channel |
+| Lagu | Sumber | Cover |
 |---|---|---|
-| Space | `vdKdgAbluyo` | Re-Logic - Topic (resmi) |
-| Iwatodai Dorm | `zByoptQ2sS0` | ATLUS Sound Team - Topic (resmi) |
-| Megalovania (jazz) | `1JbKOeeGRAM` | insaneintherainmusic (arranger-nya, di-endorse Toby Fox) |
-| Megalovania (slowed) | `R6l8LIk8Vas` | Mr.Blackhole (fan edit — versi slowed resmi nggak ada) |
+| Space Day (default) | `Space Day.mp3` | `Terraria.jpeg` |
+| Iwatodai Dorm -Reload- | `Iwatodai Dorm.mp3` | `Persona.jpeg` |
+| Song That Plays When Somebody Verses Sans | `Song That Plays When Somebody Verses Sans.mp3` | `Undertale.png` |
+| Megalovania (jazz) | YouTube `1JbKOeeGRAM` | `Undertale.png` |
+| Megalovania (slowed) | YouTube `R6l8LIk8Vas` | `Undertale.png` |
 
-Dipilih yang resmi kalau ada, karena upload fan lebih gampang ke-takedown.
-Tiap ID dicek dua kali: (1) endpoint oEmbed YouTube (cuma jawab kalau video ada & boleh
-di-embed), (2) beneran diputar di browser sampai status "now playing" — karena video
-"Topic" kadang lolos oEmbed tapi tetap diblok label musiknya.
+Judul & credit diambil dari metadata MP3-nya: Iwatodai yang kamu kasih itu versi
+**Reload**, dan lagu Sans itu "Pacifist Sans Fight" dari OST 10th Anniversary — **bukan**
+Megalovania. Dua Megalovania (jazz/slowed) belum ada file-nya, jadi masih streaming dari
+YouTube (label "yt" di daftar lagu). Mau dibuang? Hapus aja dua objek itu di `music.ts`.
 
-**Kalau suatu saat ada lagu yang nggak mau main** (statusnya "couldn't play this track"),
-kemungkinan videonya dihapus/diblok — tinggal ganti `videoId`-nya.
+### Kenapa file-nya bisa tetap di root repo (nggak dipindah ke `public/`)
+Next cuma nyajiin file apa adanya dari `public/`. Tapi bundler (Turbopack) bisa "ngangkut"
+file dari mana aja kalau di-*import*:
+- Gambar: `import cover from "../../Terraria.jpeg"` → `cover.src` (fitur bawaan).
+- Audio: `new URL("../../Space Day.mp3", import.meta.url).href` → pola standar bundler
+  buat file apa pun.
+Pas build, dua-duanya disalin ke `out/_next/static/media/` dengan nama ber-hash
+(`Space Day.0hqi1z57hroeh.mp3`). Bonus: kalau isi file-nya kamu ganti, hash-nya ganti →
+browser pengunjung otomatis ambil yang baru, nggak nyangkut di cache.
+**Kalau nama file-nya diubah, update juga path-nya di `src/data/music.ts`.**
 
-### Videonya ditaruh di mana
-YouTube mewajibkan player-nya kelihatan (min 200×200) selama main. Jadi videonya jadi
-**"layar" di dalam kartu player**: panel kebuka → layar di atas, kontrol di bawah;
-panel ditutup → kartunya mengecil jadi layar aja (musik tetap jalan). Pause → layarnya
-hilang. Elemen `div` tempat iframe nempel nggak pernah dipindah/di-unmount — iframe yang
-dipindah di DOM itu reload, dan lagunya bakal mulai dari awal.
+### Video YouTube (cuma buat 2 Megalovania)
+YouTube mewajibkan player kelihatan (≥200×200), jadi pas lagu "yt" main, videonya jadi
+"layar" di dalam kartu player (panel ditutup → tinggal layarnya). Lagu dari file nggak
+nampilin layar — cukup cover-nya.
 
-### Mau ganti ke file sendiri?
-`source: { kind: "file", src: "/music/nama.mp3" }` + taruh file di `public/music/`.
-(Ingat soal hak cipta kalau repo-nya publik.)
+### Kontrol OS
+Pakai Media Session API: tombol media di keyboard (play/pause/next/prev) jalan, dan
+judul + cover muncul di widget "now playing" OS / lock screen HP.
+
+### Soal hak cipta
+Lagu-lagu ini berhak cipta (Re-Logic, ATLUS, Toby Fox). Repo + GitHub Pages-mu publik,
+jadi file-nya ikut tersebar. Biasanya aman-aman aja buat portfolio kecil, tapi kalau ada
+DMCA, gampang balik: hapus file-nya dan ganti `source` ke `youtube`.
 
 ## Bagian teknis yang menarik
 - **Fade satu web**: warna-warna (`--paper`, `--ink`, `--lime`, …) didaftarkan pakai

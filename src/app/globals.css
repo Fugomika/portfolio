@@ -460,6 +460,10 @@ body::after {
   height: 200px;
 }
 
+.cover-bob {
+  animation: float-bob 2.4s steps(6) infinite;
+}
+
 .shooting-star {
   opacity: 0;
   background: linear-gradient(90deg, transparent, var(--ink));

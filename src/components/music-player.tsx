@@ -94,21 +94,36 @@ export function MusicPlayer() {
               className="overflow-hidden"
             >
               <div className="p-3">
-                <p aria-live="polite" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
-                  {STATUS[status]}
-                </p>
-                <div className="mt-1 overflow-hidden whitespace-nowrap font-display text-lg" title={track.title}>
-                  {on && !reducedMotion ? (
-                    // Two copies scrolling by exactly one copy's width = seamless loop.
-                    <p className="marquee-run" aria-label={track.title}>
-                      <span aria-hidden>{track.title} ✦ </span>
-                      <span aria-hidden>{track.title} ✦ </span>
-                    </p>
-                  ) : (
-                    <p className="truncate">{track.title}</p>
+                <div className="flex gap-3">
+                  {track.cover && (
+                    <img
+                      src={track.cover}
+                      alt=""
+                      width={64}
+                      height={64}
+                      className={`pixel-border h-16 w-16 shrink-0 object-cover ${on ? "cover-bob" : ""}`}
+                    />
                   )}
+                  <div className="min-w-0 grow">
+                    <p aria-live="polite" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft">
+                      {STATUS[status]}
+                    </p>
+                    <div className="mt-1 overflow-hidden whitespace-nowrap font-display text-lg" title={track.title}>
+                      {on && !reducedMotion ? (
+                        // Two copies scrolling by exactly one copy's width = seamless loop.
+                        <p className="marquee-run" aria-label={track.title}>
+                          <span aria-hidden>{track.title} ✦ </span>
+                          <span aria-hidden>{track.title} ✦ </span>
+                        </p>
+                      ) : (
+                        <p className="truncate">{track.title}</p>
+                      )}
+                    </div>
+                    <p className="truncate font-mono text-[11px] text-ink-soft" title={track.credit}>
+                      {track.credit}
+                    </p>
+                  </div>
                 </div>
-                <p className="truncate font-mono text-[11px] text-ink-soft">{track.credit}</p>
 
                 <div className="mt-3 flex items-center justify-center gap-2">
                   <button
@@ -162,16 +177,23 @@ export function MusicPlayer() {
                         i === index ? "bg-lime text-on-lime" : "hover:bg-paper"
                       }`}
                     >
-                      {/* Palette preview: background, ink, accent */}
-                      <span aria-hidden className="flex shrink-0 border border-current">
-                        {[t.palette.paper, t.palette.ink, t.palette.lime].map((c, k) => (
-                          <span key={k} className="block h-3 w-2" style={{ background: c }} />
-                        ))}
-                      </span>
-                      <span className="truncate">{t.title}</span>
-                      {!t.source && (
-                        <span className="ml-auto shrink-0 font-mono text-[10px] opacity-70">no audio</span>
+                      {t.cover && (
+                        <img src={t.cover} alt="" width={24} height={24} className="h-6 w-6 shrink-0 border border-current object-cover" />
                       )}
+                      <span className="truncate">{t.title}</span>
+                      <span className="ml-auto flex shrink-0 items-center gap-1.5">
+                        {(!t.source || t.source.kind === "youtube") && (
+                          <span className="font-mono text-[10px] opacity-70">
+                            {t.source ? "yt" : "no audio"}
+                          </span>
+                        )}
+                        {/* Palette preview: background, ink, accent */}
+                        <span aria-hidden className="flex border border-current">
+                          {[t.palette.paper, t.palette.ink, t.palette.lime].map((c, k) => (
+                            <span key={k} className="block h-3 w-2" style={{ background: c }} />
+                          ))}
+                        </span>
+                      </span>
                     </button>
                   </li>
                 ))}

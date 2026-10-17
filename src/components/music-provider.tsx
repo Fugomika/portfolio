@@ -209,6 +209,26 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const step = useCallback((delta: number) => select(index + delta), [index, select]);
   const toggle = useCallback(() => setOn((o) => !o), []);
 
+  // OS media controls (media keys, lock screen, "now playing" widgets).
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+    const ms = navigator.mediaSession;
+    ms.metadata = on
+      ? new MediaMetadata({
+          title: track.title,
+          artist: track.credit,
+          album: "fugo.fm",
+          artwork: track.cover
+            ? [{ src: new URL(track.cover, location.href).href, sizes: "447x447" }]
+            : [],
+        })
+      : null;
+    ms.setActionHandler("play", () => setOn(true));
+    ms.setActionHandler("pause", () => setOn(false));
+    ms.setActionHandler("nexttrack", () => step(1));
+    ms.setActionHandler("previoustrack", () => step(-1));
+  }, [on, track, step]);
+
   return (
     <MusicContext.Provider
       value={{ tracks, index, track, on, status, toggle, select, step, youtubeHost }}

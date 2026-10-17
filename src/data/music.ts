@@ -1,3 +1,16 @@
+// Songs and covers live at the repo root. `new URL(..., import.meta.url)`
+// and image imports make the bundler copy them into the build with hashed
+// names, so they don't need to be in public/.
+import terrariaCover from "../../Terraria.jpeg";
+import personaCover from "../../Persona.jpeg";
+import undertaleCover from "../../Undertale.png";
+
+const song = {
+  spaceDay: new URL("../../Space Day.mp3", import.meta.url).href,
+  iwatodai: new URL("../../Iwatodai Dorm.mp3", import.meta.url).href,
+  sans: new URL("../../Song That Plays When Somebody Verses Sans.mp3", import.meta.url).href,
+};
+
 export type Palette = {
   /** Which way the robot's stars etc. behave while this palette is active. */
   scheme: "light" | "dark";
@@ -16,7 +29,7 @@ export type Palette = {
 };
 
 export type TrackSource =
-  /** A file in public/, e.g. "/music/space.mp3". */
+  /** An audio URL — see `song` above for files in the repo. */
   | { kind: "file"; src: string }
   /** The id from a YouTube link: youtube.com/watch?v=<id>. */
   | { kind: "youtube"; videoId: string };
@@ -27,6 +40,8 @@ export type Track = {
   credit: string;
   /** Leave undefined until you've picked a file or video — the theme still works. */
   source?: TrackSource;
+  /** Album art shown in the player. */
+  cover?: string;
   palette: Palette;
   effect: "stars" | "motes" | "glitch";
 };
@@ -48,10 +63,11 @@ const monochrome: Palette = {
 // The first track is the default.
 export const tracks: Track[] = [
   {
-    id: "terraria-space",
-    title: "Space",
-    credit: "Terraria OST — Scott Lloyd Shelly",
-    source: { kind: "youtube", videoId: "vdKdgAbluyo" },
+    id: "terraria-space-day",
+    title: "Space Day",
+    credit: "Terraria OST — Re-Logic",
+    source: { kind: "file", src: song.spaceDay },
+    cover: terrariaCover.src,
     palette: {
       scheme: "dark",
       paper: "#0c0a24",
@@ -68,10 +84,11 @@ export const tracks: Track[] = [
     effect: "stars",
   },
   {
-    id: "iwatodai-dorm",
-    title: "Iwatodai Dorm",
-    credit: "Persona 3 OST — Shoji Meguro",
-    source: { kind: "youtube", videoId: "zByoptQ2sS0" },
+    id: "iwatodai-dorm-reload",
+    title: "Iwatodai Dorm -Reload-",
+    credit: "Persona 3 Reload OST — ATLUS",
+    source: { kind: "file", src: song.iwatodai },
+    cover: personaCover.src,
     palette: {
       scheme: "light",
       paper: "#eef4ff",
@@ -88,10 +105,21 @@ export const tracks: Track[] = [
     effect: "motes",
   },
   {
+    id: "verses-sans",
+    title: "Song That Plays When Somebody Verses Sans",
+    credit: "Undertale 10th Anniversary OST — Toby Fox",
+    source: { kind: "file", src: song.sans },
+    cover: undertaleCover.src,
+    palette: monochrome,
+    effect: "glitch",
+  },
+  // No local file for these two yet, so they still stream from YouTube.
+  {
     id: "megalovania-jazz",
     title: "Megalovania (jazz)",
     credit: "Undertale — Toby Fox, jazz cover by insaneintherainmusic",
     source: { kind: "youtube", videoId: "1JbKOeeGRAM" },
+    cover: undertaleCover.src,
     palette: monochrome,
     effect: "glitch",
   },
@@ -100,6 +128,7 @@ export const tracks: Track[] = [
     title: "Megalovania (slowed)",
     credit: "Undertale — Toby Fox, slowed edit by Mr.Blackhole",
     source: { kind: "youtube", videoId: "R6l8LIk8Vas" },
+    cover: undertaleCover.src,
     palette: monochrome,
     effect: "glitch",
   },
