@@ -38,6 +38,7 @@
   --font-display: var(--font-pixel);
   --font-sans: var(--font-body);
   --font-mono: var(--font-plex-mono);
+  --font-serif: var(--font-paper);
 }
 
 html {
@@ -118,6 +119,16 @@ body::after {
     transform: translate(4px, 4px);
     box-shadow: 0 0 0 0 var(--shadow);
   }
+}
+
+/* 2x2 checker dither — placeholder for project cards with no screenshot */
+@utility dither {
+  background-color: var(--paper);
+  background-image: repeating-conic-gradient(
+    color-mix(in srgb, var(--lime) 55%, transparent) 0 25%,
+    transparent 0 50%
+  );
+  background-size: 8px 8px;
 }
 
 /* Stepped underline sweep for inline links */

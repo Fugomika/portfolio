@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Pixelify_Sans, Nunito_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Pixelify_Sans, Nunito_Sans, IBM_Plex_Mono, Source_Serif_4 } from "next/font/google";
 import { UiProvider } from "@/components/ui-provider";
 import { site } from "@/data/site";
 import "./globals.css";
@@ -19,6 +19,13 @@ const mono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+});
+
+// Project write-ups are typeset like research papers.
+const serif = Source_Serif_4({
+  variable: "--font-paper",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -42,7 +49,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${pixel.variable} ${body.variable} ${mono.variable} h-full antialiased`}
+      className={`${pixel.variable} ${body.variable} ${mono.variable} ${serif.variable} h-full antialiased`}
     >
       <head>
         {/* Runs before paint so the saved theme never flashes */}
