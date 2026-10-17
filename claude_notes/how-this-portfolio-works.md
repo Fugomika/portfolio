@@ -103,6 +103,12 @@ The hero's right column is a record player (it replaced the old pixel robot).
   progress*100` draws exactly that share of the circle.
 - The record is black in every theme, like the robot's visor was: it's an object, not UI.
 
+**Tab icon** (`src/app/icon.svg` + `src/app/favicon.ico`): a 32×32 pixel vinyl to match.
+The SVG is generated (each pixel's colour picked by its distance from the centre, then
+merged into row runs), so the circle is clean. A light rim keeps it visible on dark tab
+bars. The `.ico` holds 16/32/48px versions for browsers that ask for it; Next adds a hash
+to both links, so old cached robot icons get replaced.
+
 ## Motion / reduced motion
 
 The animation library is `motion` — this is Framer Motion's successor (same team,
