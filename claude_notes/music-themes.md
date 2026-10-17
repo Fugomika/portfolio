@@ -38,6 +38,15 @@ Bug kecil yang sempat ketemu: buat ngecek "lagunya ganti nggak?", kode dulu ngeb
 jadi selalu dianggap beda → pause/play bikin lagu mulai dari 0. Sekarang yang dibandingin
 itu URL yang terakhir *kita* pasang (disimpan di `useRef`).
 
+### Tombol light/dark dikunci selama musik main
+Selama lagu main, palet lagu = tema, jadi tombol light/dark di header **disabled**
+(redup, tooltip "Theme follows the song while music plays"). Pause → tombolnya aktif lagi
+dan tema kamu (light/dark yang tersimpan) balik. Dua hal yang dulu masih ngikutin tombol
+dark mode — bukan lagunya — sekarang ngikutin `data-music-scheme` palet lagu:
+- **Garis scanline**: dulu kalau kamu di dark mode, Iwatodai (palet terang) dapet garis
+  gelap yang tebal. Sekarang garisnya ngikutin skema lagu.
+- **Warna rarity skill** (legendary/epic/rare/common): sama, biar kontrasnya tetap pas.
+
 ### Transisi yang halus
 Tiga hal yang dulu "loncat" sekarang memudar bareng:
 - **Warna**: 1,6 detik `ease-in-out` (variabel `@property`). `<body>` punya transisi warna

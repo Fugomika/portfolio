@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useUi } from "@/components/ui-provider";
+import { useMusic } from "@/components/music-provider";
 
 const NAV = [
   { label: "About", href: "/#about" },
@@ -70,21 +71,24 @@ function Toggle({
   pressed,
   onClick,
   label,
+  disabled,
   children,
 }: {
   pressed: boolean;
   onClick: () => void;
   label: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={pressed}
       aria-label={label}
       title={label}
-      className={`pixel-border pixel-shadow-sm pixel-press flex h-9 w-9 items-center justify-center font-mono text-sm ${
+      className={`pixel-border pixel-shadow-sm pixel-press flex h-9 w-9 items-center justify-center font-mono text-sm disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none ${
         pressed ? "bg-lime text-on-lime" : "bg-card"
       }`}
     >
@@ -96,6 +100,8 @@ function Toggle({
 export function Header() {
   const { dark, scanlines, sfx, toggleDark, toggleScanlines, toggleSfx, blip } =
     useUi();
+  // While a song plays, its palette is the theme; your setting returns after.
+  const { on: musicOn } = useMusic();
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-line bg-paper/95 backdrop-blur-sm">
@@ -145,7 +151,14 @@ export function Header() {
           <Toggle
             pressed={dark}
             onClick={toggleDark}
-            label={dark ? "Switch to light mode" : "Switch to dark mode"}
+            disabled={musicOn}
+            label={
+              musicOn
+                ? "Theme follows the song while music plays"
+                : dark
+                  ? "Switch to light mode"
+                  : "Switch to dark mode"
+            }
           >
             <Icon name={dark ? "moon" : "sun"} />
           </Toggle>

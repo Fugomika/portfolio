@@ -67,6 +67,21 @@
   --r-legendary: #ffb454;
 }
 
+/* While a song's palette is active, its scheme (not your theme toggle) picks
+   the rarity colours, so they keep their contrast. */
+:root[data-music-scheme="light"] {
+  --r-common: #8a826c;
+  --r-rare: #2f7fd8;
+  --r-epic: #9b4fd6;
+  --r-legendary: #d98200;
+}
+:root[data-music-scheme="dark"] {
+  --r-common: #8e88a6;
+  --r-rare: #5aa8ff;
+  --r-epic: #c084fc;
+  --r-legendary: #ffb454;
+}
+
 @theme inline {
   --color-paper: var(--paper);
   --color-card: var(--card);
@@ -122,7 +137,8 @@ body::after {
     rgba(38, 34, 26, 0.08) 3px
   );
 }
-.dark.scanlines body::before {
+.dark.scanlines:not([data-music-scheme="light"]) body::before,
+[data-music-scheme="dark"].scanlines body::before {
   background: repeating-linear-gradient(
     to bottom,
     transparent 0,
