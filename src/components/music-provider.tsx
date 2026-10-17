@@ -35,7 +35,30 @@ export function useMusic() {
 }
 
 const TRACK_KEY = "fugo_track";
-const FADE_MS = 1000;
+// Slightly longer than the 1.6s palette transition in globals.css.
+const FADE_MS = 1800;
+
+/**
+ * Ramp an audio element's volume. Each call cancels the previous ramp (so
+ * quick clicks never fight), and resolves true only if it ran to the end.
+ * Timer-based rather than rAF so it still finishes in a background tab.
+ */
+let rampId = 0;
+function fadeVolume(el: HTMLAudioElement, to: number, ms: number): Promise<boolean> {
+  const id = ++rampId;
+  const from = el.volume;
+  const start = performance.now();
+  return new Promise((resolve) => {
+    const tick = () => {
+      if (id !== rampId) return resolve(false);
+      const k = Math.min(1, (performance.now() - start) / ms);
+      el.volume = from + (to - from) * k;
+      if (k < 1) setTimeout(tick, 16);
+      else resolve(true);
+    };
+    tick();
+  });
+}
 
 const VARS: [keyof Omit<Palette, "scheme">, string][] = [
   ["paper", "--paper"],
@@ -105,8 +128,9 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(t);
   }, [on, track]);
 
-  // Drive the audio from (on, track). Pausing keeps the position, so
-  // pressing play again resumes; a new track starts from the top.
+  // Drive the audio from (on, track), with volume fades: pausing fades out
+  // then pauses (keeping the position); switching songs fades the old one
+  // out and the new one in.
   useEffect(() => {
     if (!audio.current) {
       const el = new Audio();
@@ -121,24 +145,36 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     /* eslint-disable react-hooks/set-state-in-effect */
     if (!on) {
-      el.pause();
       setStatus("idle");
+      fadeVolume(el, 0, 500).then((done) => done && el.pause());
       return;
     }
     setStatus("loading");
     /* eslint-enable react-hooks/set-state-in-effect */
-    if (loadedSrc.current !== track.src) {
-      loadedSrc.current = track.src;
-      el.src = track.src;
-    }
-    el.play()
-      .then(() => {
+
+    const switching = loadedSrc.current !== track.src;
+    (async () => {
+      if (switching && !el.paused) {
+        await fadeVolume(el, 0, 450);
         if (cancelled) return;
-        setStatus("playing");
-        played.current.add(track.id);
-        if (played.current.size === tracks.length) unlock("crate-digger");
-      })
-      .catch(() => !cancelled && setStatus("error"));
+      }
+      if (switching) {
+        loadedSrc.current = track.src;
+        el.src = track.src;
+      }
+      if (el.paused) el.volume = 0;
+      try {
+        await el.play();
+      } catch {
+        if (!cancelled) setStatus("error");
+        return;
+      }
+      if (cancelled) return;
+      setStatus("playing");
+      played.current.add(track.id);
+      if (played.current.size === tracks.length) unlock("crate-digger");
+      fadeVolume(el, 1, switching ? 900 : 500);
+    })();
     return () => {
       cancelled = true;
     };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useMusic } from "@/components/music-provider";
 
 // Seeded PRNG so the layout is stable between renders (and lint-pure).
@@ -56,7 +56,7 @@ function Motes() {
     const r = rng(3);
     return Array.from({ length: 28 }, () => ({
       left: r() * 100,
-      size: 3 + Math.floor(r() * 4),
+      size: 5 + Math.floor(r() * 5),
       delay: -r() * 20,
       duration: 14 + r() * 12,
     }));
@@ -95,16 +95,85 @@ function Glitch() {
   );
 }
 
+/** A pixel bone, `h` px tall: knobs at both ends, a shaft between. */
+function Bone({ h }: { h: number }) {
+  return (
+    <svg width="12" height={h} viewBox={`0 0 12 ${h}`} style={{ shapeRendering: "crispEdges" }}>
+      <rect x="0" y="0" width="5" height="5" fill="var(--ink)" />
+      <rect x="7" y="0" width="5" height="5" fill="var(--ink)" />
+      <rect x="3" y="3" width="6" height={h - 6} fill="var(--ink)" />
+      <rect x="0" y={h - 5} width="5" height="5" fill="var(--ink)" />
+      <rect x="7" y={h - 5} width="5" height="5" fill="var(--ink)" />
+    </svg>
+  );
+}
+
+function Bones() {
+  const bones = useMemo(() => {
+    const r = rng(11);
+    return Array.from({ length: 12 }, () => ({
+      fromTop: r() < 0.35,
+      height: 40 + Math.floor(r() * 150),
+      ltr: r() < 0.5,
+      duration: 7 + r() * 6,
+      delay: -r() * 13,
+    }));
+  }, []);
+  return (
+    <>
+      {bones.map((bone, i) => (
+        <span
+          key={i}
+          className={`absolute left-0 ${bone.fromTop ? "top-0" : "bottom-0"}`}
+          style={{
+            opacity: 0.5,
+            animation: `${bone.ltr ? "bone-ltr" : "bone-rtl"} ${bone.duration}s linear ${bone.delay}s infinite`,
+          }}
+        >
+          <Bone h={bone.height} />
+        </span>
+      ))}
+      {/* Every so often, a quick row of short bones dashes along the floor */}
+      <span
+        className="absolute bottom-0 left-0 flex gap-3"
+        style={{ opacity: 0.6, animation: "bone-wave 9s steps(40) 2s infinite" }}
+      >
+        {Array.from({ length: 9 }, (_, i) => (
+          <Bone key={i} h={34} />
+        ))}
+      </span>
+    </>
+  );
+}
+
 /** Ambient background layer for the current track, behind all content. */
 export function MusicFx() {
   const { on, track } = useMusic();
   const reducedMotion = useReducedMotion();
-  if (!on || reducedMotion) return null;
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {track.effect === "stars" && <Stars />}
-      {track.effect === "motes" && <Motes />}
-      {track.effect === "glitch" && <Glitch />}
+      {/* Keyed by effect, so switching songs cross-fades old → new */}
+      <AnimatePresence>
+        {on && !reducedMotion && (
+          <motion.div
+            key={track.effect}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.4, ease: "easeInOut" }}
+          >
+            {track.effect === "stars" && <Stars />}
+            {track.effect === "motes" && <Motes />}
+            {track.effect === "bones" && (
+              <>
+                <Bones />
+                <Glitch />
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

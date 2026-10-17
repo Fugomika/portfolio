@@ -17,8 +17,8 @@
 | Lagu | File | Cover | Palet | Efek |
 |---|---|---|---|---|
 | Space Day | `Space Day.mp3` | `Terraria.jpeg` | biru-ungu gelap | bintang + bintang jatuh |
-| Iwatodai Dorm -Reload- | `Iwatodai Dorm.mp3` | `Persona.jpeg` | biru & putih | partikel cahaya naik |
-| Song That Plays When Somebody Verses Sans | `Song That Plays When Somebody Verses Sans.mp3` | `Undertale.png` | hitam & putih | garis glitch |
+| Iwatodai Dorm -Reload- | `Iwatodai Dorm.mp3` | `Persona.jpeg` | biru & putih | partikel cahaya naik (5–9px) |
+| Song That Plays When Somebody Verses Sans | `Song That Plays When Somebody Verses Sans.mp3` | `Undertale.png` | hitam & putih | **tulang-tulang** lewat + garis glitch |
 
 Judul & credit diambil dari metadata MP3: Iwatodai itu versi **Reload**, lagu Sans itu
 "Pacifist Sans Fight" dari OST 10th Anniversary (bukan Megalovania). YouTube sudah nggak
@@ -37,6 +37,26 @@ Bug kecil yang sempat ketemu: buat ngecek "lagunya ganti nggak?", kode dulu ngeb
 `audio.src` sama URL lagu. Tapi browser nge-*normalisasi* `audio.src` (spasi jadi `%20`),
 jadi selalu dianggap beda → pause/play bikin lagu mulai dari 0. Sekarang yang dibandingin
 itu URL yang terakhir *kita* pasang (disimpan di `useRef`).
+
+### Transisi yang halus
+Tiga hal yang dulu "loncat" sekarang memudar bareng:
+- **Warna**: 1,6 detik `ease-in-out` (variabel `@property`). `<body>` punya transisi warna
+  0,2 detik sendiri buat toggle dark mode — selama fade musik itu dimatikan
+  (`:root[data-music-fade] body`), karena dia terus "ngejar" variabel yang lagi bergerak
+  dan bikin fade-nya patah-patah.
+- **Suara**: `fadeVolume()` di `music-provider.tsx`. Pause → volume turun 0,5 dtk, baru
+  di-pause (posisi tetap). Ganti lagu → lagu lama turun 0,45 dtk, lagu baru naik 0,9 dtk.
+  Tiap fade baru membatalkan fade sebelumnya, jadi klik cepat berkali-kali aman. Pakai
+  `setTimeout`, bukan `requestAnimationFrame`, supaya tetap selesai walau tab-nya di
+  background (rAF berhenti di tab yang nggak kelihatan → lagunya nggak jadi ke-pause).
+- **Efek latar**: layer efek di-*key* per jenis efek di dalam `AnimatePresence`, jadi
+  bintang memudar keluar sambil partikel/tulang memudar masuk (1,4 dtk).
+
+### Tulang Sans
+`<Bone>` = SVG piksel (dua kenop di tiap ujung + batang). 12 tulang dengan tinggi acak
+(PRNG ber-seed), sebagian nongol dari bawah, sebagian gantung dari atas, jalan ke kiri
+atau ke kanan kayak di kotak battle Undertale. Tiap ±9 detik ada satu baris tulang pendek
+yang lari cepat di lantai. Opacity 0,5 biar teks putih di atasnya tetap kebaca.
 
 ### Kontrol OS
 Media Session API: tombol media di keyboard (play/pause/next/prev) jalan, dan judul + cover

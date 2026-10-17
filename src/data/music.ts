@@ -37,7 +37,7 @@ export type Track = {
   /** Album art on the record's label. */
   cover: string;
   palette: Palette;
-  effect: "stars" | "motes" | "glitch";
+  effect: "stars" | "motes" | "bones";
 };
 
 const monochrome: Palette = {
@@ -105,6 +105,6 @@ export const tracks: Track[] = [
     src: song.sans,
     cover: undertaleCover.src,
     palette: monochrome,
-    effect: "glitch",
+    effect: "bones",
   },
 ];

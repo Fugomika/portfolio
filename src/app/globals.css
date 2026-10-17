@@ -22,10 +22,16 @@
 @property --on-lime { syntax: "<color>"; inherits: true; initial-value: #26221a; }
 
 :root[data-music-fade] {
+  --fade: 1.6s ease-in-out;
   transition:
-    --paper 900ms ease, --card 900ms ease, --ink 900ms ease, --ink-soft 900ms ease,
-    --line 900ms ease, --lime 900ms ease, --lime-deep 900ms ease, --amber 900ms ease,
-    --shadow 900ms ease, --on-lime 900ms ease;
+    --paper var(--fade), --card var(--fade), --ink var(--fade), --ink-soft var(--fade),
+    --line var(--fade), --lime var(--fade), --lime-deep var(--fade), --amber var(--fade),
+    --shadow var(--fade), --on-lime var(--fade);
+}
+/* The variables already animate; body's own short colour transition would
+   keep restarting as it chases them, which makes the fade stutter. */
+:root[data-music-fade] body {
+  transition: none;
 }
 
 :root {
@@ -460,6 +466,34 @@ body::after {
   100% {
     opacity: 0;
     translate: -320px 185px;
+  }
+}
+
+/* Sans: bones sliding across, like the battle box */
+@keyframes bone-ltr {
+  from {
+    transform: translateX(-60px);
+  }
+  to {
+    transform: translateX(calc(100vw + 60px));
+  }
+}
+@keyframes bone-rtl {
+  from {
+    transform: translateX(calc(100vw + 60px));
+  }
+  to {
+    transform: translateX(-60px);
+  }
+}
+/* A quick row of small bones that dashes across, then waits */
+@keyframes bone-wave {
+  0% {
+    transform: translateX(-40vw);
+  }
+  30%,
+  100% {
+    transform: translateX(110vw);
   }
 }
 
